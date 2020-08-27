@@ -1,0 +1,31 @@
+.Table-outside {
+  background-color: saddlebrown;
+  border-radius: 16px;
+  height: 80vh;
+  margin: 25px auto;
+  width: 90%;
+  position: relative;
+  z-index: 1;
+}
+
+.Table-bumpers {
+  background-color: green;
+  border-radius: 16px;
+  margin: 20px;
+  height: calc(100% - 40px);
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  width: calc(100% - 40px);
+  left: 0;
+}
+
+.Table-felt {
+  background-color: transparent;
+  border-radius: 16px;
+  border: 1px solid #000;
+  margin: 10px;
+  height: calc(100% - 20px);
+  position: absolute;
+  width: calc(100% - 20px);
+}
