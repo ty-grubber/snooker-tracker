@@ -1,3 +1,8 @@
+:root {
+  --cornerPocketSize: 46px;
+  --sidePocketSize: 36px;
+}
+
 .Table-outside {
   background-color: saddlebrown;
   border-radius: 16px;
@@ -25,23 +30,39 @@
   background-color: black;
   border-radius: 16px;
   clip-path: polygon(0 0, 50% 0, 100% 50%, 50% 100%, 0 50%);
-  height: 46px;
+  height: var(--cornerPocketSize);
   position: absolute;
-  width: 46px;
+  width: var(--cornerPocketSize);
 }
 
 #center-top,
 #center-bottom {
-  left: 50%;
+  border-radius: 32px;
+  clip-path: none;
+  left: calc(50% - calc(var(--sidePocketSize) / 2));
+  height: var(--sidePocketSize);
+  width: var(--sidePocketSize);
 }
 
 #right-top,
 #right-bottom {
-  left: 100%;
+  clip-path: polygon(100% 0, 100% 50%, 50% 100%, 0 50%, 50% 0);
+  left: calc(100% - var(--cornerPocketSize));
 }
 
 #left-bottom,
-#center-bottom,
 #right-bottom {
-  top: 100%;
+  top: calc(100% - var(--cornerPocketSize));
+}
+
+#center-bottom {
+  top: calc(100% - var(--sidePocketSize));
+}
+
+#left-bottom {
+  clip-path: polygon(0 100%, 0 50%, 50% 0, 100% 50%, 50% 100%);
+}
+
+#right-bottom {
+  clip-path: polygon(100% 100%, 50% 100%, 0 50%, 50% 0, 100% 50%);
 }
