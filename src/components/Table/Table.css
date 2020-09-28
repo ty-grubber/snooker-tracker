@@ -10,6 +10,7 @@
 
 .Table-bumpers {
   background-color: green;
+  border: 2px solid #006000;
   border-radius: 16px;
   margin: 20px;
   height: calc(100% - 40px);
@@ -20,12 +21,27 @@
   left: 0;
 }
 
-.Table-felt {
-  background-color: transparent;
+.Table-pocket {
+  background-color: black;
   border-radius: 16px;
-  border: 1px solid #000;
-  margin: 10px;
-  height: calc(100% - 20px);
+  clip-path: polygon(0 0, 50% 0, 100% 50%, 50% 100%, 0 50%);
+  height: 46px;
   position: absolute;
-  width: calc(100% - 20px);
+  width: 46px;
+}
+
+#center-top,
+#center-bottom {
+  left: 50%;
+}
+
+#right-top,
+#right-bottom {
+  left: 100%;
+}
+
+#left-bottom,
+#center-bottom,
+#right-bottom {
+  top: 100%;
 }

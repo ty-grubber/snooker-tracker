@@ -5,9 +5,6 @@ export default function Table() {
   return (
     <div className="Table-outside">
       <div className="Table-bumpers">
-        <div className="Table-felt">
-
-        </div>
       </div>
       <div id="left-top" className="Table-pocket">
 
