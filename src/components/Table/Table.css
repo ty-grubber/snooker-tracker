@@ -1,0 +1,107 @@
+:root {
+  --baulkCircleHeight: 25%;
+  --baulkCircleWidth: 8%;
+  --baulkLineLeftPosition: 20%;
+  --cornerPocketSize: 46px;
+  --sidePocketSize: 36px;
+}
+
+.Table-outside {
+  background-color: saddlebrown;
+  border-radius: 16px;
+  height: 80vh;
+  margin: 25px auto;
+  max-height: 500px;
+  position: relative;
+  width: 90%;
+  z-index: 1;
+}
+
+.Table-bumpers {
+  background-color: green;
+  border: 2px solid #006000;
+  border-radius: 16px;
+  left: 0;
+  margin: 20px;
+  height: calc(100% - 40px);
+  position: absolute;
+  top: 0;
+  width: calc(100% - 40px);
+  z-index: 2;
+}
+
+.Table-baulk {
+  left: var(--baulkLineLeftPosition);
+  position: absolute;
+}
+
+.Table-baulk.circleTop {
+  background-color: transparent;
+  border-left: 2px solid white;
+  border-top: 2px solid white;
+  border-top-left-radius: 100%;
+  height: var(--baulkCircleHeight);
+  left: calc(var(--baulkLineLeftPosition) - var(--baulkCircleWidth));
+  position: absolute;
+  top: calc(50% - var(--baulkCircleHeight));
+  width: var(--baulkCircleWidth);
+}
+
+.Table-baulk.circleBottom {
+  background-color: transparent;
+  border-bottom: 2px solid white;
+  border-left: 2px solid white;
+  border-bottom-left-radius: 100%;
+  height: var(--baulkCircleHeight);
+  left: calc(var(--baulkLineLeftPosition) - var(--baulkCircleWidth));
+  position: absolute;
+  top: 50%;
+  width: var(--baulkCircleWidth);
+}
+
+.Table-baulk.line {
+  border-left: 2px solid white;
+  height: 100%;
+  width: 0;
+}
+
+.Table-pocket {
+  background-color: black;
+  border-radius: 16px;
+  clip-path: polygon(0 0, 50% 0, 100% 50%, 50% 100%, 0 50%);
+  height: var(--cornerPocketSize);
+  position: absolute;
+  width: var(--cornerPocketSize);
+}
+
+#center-top,
+#center-bottom {
+  border-radius: 32px;
+  clip-path: none;
+  left: calc(50% - calc(var(--sidePocketSize) / 2));
+  height: var(--sidePocketSize);
+  width: var(--sidePocketSize);
+}
+
+#right-top,
+#right-bottom {
+  clip-path: polygon(100% 0, 100% 50%, 50% 100%, 0 50%, 50% 0);
+  left: calc(100% - var(--cornerPocketSize));
+}
+
+#left-bottom,
+#right-bottom {
+  top: calc(100% - var(--cornerPocketSize));
+}
+
+#center-bottom {
+  top: calc(100% - var(--sidePocketSize));
+}
+
+#left-bottom {
+  clip-path: polygon(0 100%, 0 50%, 50% 0, 100% 50%, 50% 100%);
+}
+
+#right-bottom {
+  clip-path: polygon(100% 100%, 50% 100%, 0 50%, 50% 0, 100% 50%);
+}
