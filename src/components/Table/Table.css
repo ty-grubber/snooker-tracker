@@ -1,4 +1,7 @@
 :root {
+  --baulkCircleHeight: 25%;
+  --baulkCircleWidth: 8%;
+  --baulkLineLeftPosition: 20%;
   --cornerPocketSize: 46px;
   --sidePocketSize: 36px;
 }
@@ -24,6 +27,41 @@
   z-index: 2;
   width: calc(100% - 40px);
   left: 0;
+}
+
+.Table-baulk {
+  position: absolute;
+  left: var(--baulkLineLeftPosition);
+}
+
+.Table-baulk.circleTop {
+  background-color: transparent;
+  border-left: 2px solid white;
+  border-top: 2px solid white;
+  border-top-left-radius: 100%;
+  height: var(--baulkCircleHeight);
+  left: calc(var(--baulkLineLeftPosition) - var(--baulkCircleWidth));
+  position: absolute;
+  top: calc(50% - var(--baulkCircleHeight));
+  width: var(--baulkCircleWidth);
+}
+
+.Table-baulk.circleBottom {
+  background-color: transparent;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  border-bottom-left-radius: 100%;
+  height: var(--baulkCircleHeight);
+  left: calc(var(--baulkLineLeftPosition) - var(--baulkCircleWidth));
+  position: absolute;
+  top: 50%;
+  width: var(--baulkCircleWidth);
+}
+
+.Table-baulk.line {
+  border-left: 2px solid white;
+  height: 100%;
+  width: 0;
 }
 
 .Table-pocket {
