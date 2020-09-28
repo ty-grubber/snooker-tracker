@@ -11,8 +11,9 @@
   border-radius: 16px;
   height: 80vh;
   margin: 25px auto;
-  width: 90%;
+  max-height: 500px;
   position: relative;
+  width: 90%;
   z-index: 1;
 }
 
@@ -20,18 +21,18 @@
   background-color: green;
   border: 2px solid #006000;
   border-radius: 16px;
+  left: 0;
   margin: 20px;
   height: calc(100% - 40px);
   position: absolute;
   top: 0;
-  z-index: 2;
   width: calc(100% - 40px);
-  left: 0;
+  z-index: 2;
 }
 
 .Table-baulk {
-  position: absolute;
   left: var(--baulkLineLeftPosition);
+  position: absolute;
 }
 
 .Table-baulk.circleTop {
@@ -48,8 +49,8 @@
 
 .Table-baulk.circleBottom {
   background-color: transparent;
-  border-left: 2px solid white;
   border-bottom: 2px solid white;
+  border-left: 2px solid white;
   border-bottom-left-radius: 100%;
   height: var(--baulkCircleHeight);
   left: calc(var(--baulkLineLeftPosition) - var(--baulkCircleWidth));
