@@ -1,4 +1,5 @@
 import React from 'react';
+import Ball from '../Ball';
 import './Table.css';
 
 export default function Table() {
@@ -15,6 +16,9 @@ export default function Table() {
       <div id="left-bottom" className="Table-pocket" />
       <div id="center-bottom" className="Table-pocket" />
       <div id="right-bottom" className="Table-pocket" />
+      <div className="Table-balls">
+        <Ball />
+      </div>
     </div>
   )
 }
