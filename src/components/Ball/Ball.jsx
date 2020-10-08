@@ -17,10 +17,11 @@ export default function Ball({className, color}) {
   const BallDiv = styled.div`
     background-color: ${props => COLOR_MAP[props.color]};
     border: 1px solid black;
-    height: 25px;
-    width: 25px;
     border-radius: 25px;
-    position: relative;
+    cursor: pointer;
+    height: 25px;
+    position: absolute;
+    width: 25px;
   `
 
   return (

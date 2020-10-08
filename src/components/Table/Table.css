@@ -65,6 +65,11 @@
   width: 0;
 }
 
+.Table-balls {
+  height: 100%;
+  width: 100%;
+}
+
 .Table-pocket {
   background-color: black;
   border-radius: 16px;
