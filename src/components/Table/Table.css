@@ -17,7 +17,7 @@
   z-index: 1;
 }
 
-.Table-bumpers {
+.Table-inside {
   background-color: green;
   border: 2px solid #006000;
   border-radius: 16px;
@@ -63,6 +63,11 @@
   border-left: 2px solid white;
   height: 100%;
   width: 0;
+}
+
+.Table-balls {
+  height: 100%;
+  width: 100%;
 }
 
 .Table-pocket {
