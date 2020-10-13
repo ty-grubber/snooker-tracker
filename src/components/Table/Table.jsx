@@ -53,10 +53,10 @@ export default function Table() {
         <div className="Table-baulk circleBottom" />
         <div className="Table-baulk line" />
         <div className="Table-balls">
-          <WhiteBall />
-          <YellowBall />
-          <BrownBall />
-          <GreenBall />
+          <WhiteBall menuOpenDirection="right" />
+          <YellowBall menuOpenDirection="right" />
+          <BrownBall menuOpenDirection="right" />
+          <GreenBall menuOpenDirection="right" />
           <BlueBall />
           <PinkBall />
           <RedBall />

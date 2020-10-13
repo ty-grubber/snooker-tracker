@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { sizing } from '../../constants/styles';
 import BallMenu from '../BallMenu';
 
-export default function Ball({className}) {
+export default function Ball({className, menuOpenDirection}) {
   const BallDiv = styled.div`
     border: 1px solid #000;
     border-radius: ${sizing.ballDiameter};
@@ -17,7 +17,7 @@ export default function Ball({className}) {
   return (
     <>
       <BallDiv className={className}>
-        <BallMenu isOpen />
+        <BallMenu isOpen openDirection={menuOpenDirection} />
       </BallDiv>
     </>
   );
@@ -25,8 +25,10 @@ export default function Ball({className}) {
 
 Ball.propTypes = {
   className: PropTypes.string,
+  menuOpenDirection: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
 }
 
 Ball.defaultProps = {
   className: undefined,
+  menuOpenDirection: 'bottom',
 }
