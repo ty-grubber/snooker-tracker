@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { sizing } from '../../constants/styles';
+import BallMenu from '../BallMenu';
 
 export default function Ball({className}) {
   const BallDiv = styled.div`
@@ -14,7 +15,11 @@ export default function Ball({className}) {
   `
 
   return (
-    <BallDiv className={className}>&nbsp;</BallDiv>
+    <>
+      <BallDiv className={className}>
+        <BallMenu isOpen />
+      </BallDiv>
+    </>
   );
 }
 
