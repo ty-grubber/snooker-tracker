@@ -3,48 +3,76 @@ import React from 'react';
 import Ball from '../Ball';
 import { sizing } from '../../constants/styles';
 import './Table.css';
+import { BALL_VALUES } from '../../constants/ballValues';
 
 export default function Table() {
-  const WhiteBall = styled(Ball)`
-    background-color: #fff;
-    left: calc(10% - calc(${sizing.ballDiameter} / 2));
-    top: calc(50% - calc(${sizing.ballDiameter} / 2));
-  `
   const YellowBall = styled(Ball)`
     background-color: #f9e137;
     left: calc(20% - calc(${sizing.ballDiameter} / 2));
     top: calc(75% - calc(${sizing.ballDiameter} / 2));
+
+    & > ul {
+      background-color: #f9e137;
+    }
   `
   const GreenBall = styled(Ball)`
     background-color: #04541d;
     left: calc(20% - calc(${sizing.ballDiameter} / 2));
     top: calc(25% - calc(${sizing.ballDiameter} / 2));
+
+    & > ul {
+      background-color: #04541d;
+      color: #fff;
+    }
   `
   const BrownBall = styled(Ball)`
     background-color: #624024;
     left: calc(20% - calc(${sizing.ballDiameter} / 2));
     top: calc(50% - calc(${sizing.ballDiameter} / 2));
+
+    & > ul {
+      background-color: #624024;
+      color: #fff;
+    }
   `
   const BlueBall = styled(Ball)`
     background-color: #0632d0;
     left: calc(50% - calc(${sizing.ballDiameter} / 2));
     top: calc(50% - calc(${sizing.ballDiameter} / 2));
+
+    & > ul {
+      background-color: #0632d0;
+      color: #fff;
+    }
   `
   const PinkBall = styled(Ball)`
     background-color: #fb6284;
     left: calc(70% - calc(${sizing.ballDiameter} / 2));
     top: calc(50% - calc(${sizing.ballDiameter} / 2));
+
+    & > ul {
+      background-color: #fb6284;
+    }
   `
   const RedBall = styled(Ball)`
     background-color: #ce0317;
     left: calc(80% - calc(${sizing.ballDiameter} / 2));
     top: calc(50% - calc(${sizing.ballDiameter} / 2));
+
+    & > ul {
+      background-color: #ce0317;
+      color: #fff;
+    }
   `
   const BlackBall = styled(Ball)`
     background-color: #000;
-    border: 1px solid #fff;
     left: calc(90% - calc(${sizing.ballDiameter} / 2));
     top: calc(50% - calc(${sizing.ballDiameter} / 2));
+
+    & > ul {
+      background-color: #000;
+      color: #fff;
+    }
   `
   return (
     <div className="Table-outside">
@@ -53,14 +81,13 @@ export default function Table() {
         <div className="Table-baulk circleBottom" />
         <div className="Table-baulk line" />
         <div className="Table-balls">
-          <WhiteBall />
-          <YellowBall />
-          <BrownBall />
-          <GreenBall />
-          <BlueBall />
-          <PinkBall />
-          <RedBall />
-          <BlackBall />
+          <GreenBall menuOpenDirection="right" value={BALL_VALUES.GREEN} />
+          <BrownBall menuOpenDirection="left" value={BALL_VALUES.BROWN} />
+          <YellowBall menuOpenDirection="bottom" value={BALL_VALUES.YELLOW} />
+          <BlueBall value={BALL_VALUES.BLUE} />
+          <PinkBall value={BALL_VALUES.PINK} />
+          <RedBall value={BALL_VALUES.RED} />
+          <BlackBall value={BALL_VALUES.BLACK} />
         </div>
       </div>
       <div id="left-top" className="Table-pocket" />
