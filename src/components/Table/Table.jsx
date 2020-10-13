@@ -3,6 +3,7 @@ import React from 'react';
 import Ball from '../Ball';
 import { sizing } from '../../constants/styles';
 import './Table.css';
+import { BALL_VALUES } from '../../constants/ballValues';
 
 export default function Table() {
   const YellowBall = styled(Ball)`
@@ -80,13 +81,13 @@ export default function Table() {
         <div className="Table-baulk circleBottom" />
         <div className="Table-baulk line" />
         <div className="Table-balls">
-          <YellowBall menuOpenDirection="bottom" />
-          <BrownBall menuOpenDirection="left" />
-          <GreenBall menuOpenDirection="right" />
-          <BlueBall />
-          <PinkBall />
-          <RedBall />
-          <BlackBall />
+          <GreenBall menuOpenDirection="right" value={BALL_VALUES.GREEN} />
+          <BrownBall menuOpenDirection="left" value={BALL_VALUES.BROWN} />
+          <YellowBall menuOpenDirection="bottom" value={BALL_VALUES.YELLOW} />
+          <BlueBall value={BALL_VALUES.BLUE} />
+          <PinkBall value={BALL_VALUES.PINK} />
+          <RedBall value={BALL_VALUES.RED} />
+          <BlackBall value={BALL_VALUES.BLACK} />
         </div>
       </div>
       <div id="left-top" className="Table-pocket" />

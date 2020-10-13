@@ -1,9 +1,11 @@
 /** @jsx jsx */
+import { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { css, jsx } from '@emotion/core';
 import { sizing } from '../../constants/styles';
+import { VALUE_TO_DISPLAY_COLOR } from '../../constants/ballValues';
 
-export default function BallMenu({ className, isOpen, openDirection }) {
+export default function BallMenu({ ballValue, className, isOpen, openDirection }) {
   const menu = css`
     background-color: white;
     color: black;
@@ -55,22 +57,72 @@ export default function BallMenu({ className, isOpen, openDirection }) {
     default:
   }
 
+  const onMiss = useCallback(() => {
+    console.log(`Missed shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
+  }, [ballValue]);
+
+  const onLongMiss = useCallback(() => {
+    console.log(`Missed long shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
+  }, [ballValue]);
+
+  const onPot = useCallback(() => {
+    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}`);
+  }, [ballValue]);
+
+  const onLongPot = useCallback(() => {
+    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]} with long shot. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}`);
+  }, [ballValue]);
+
+  const onSafety = useCallback(() => {
+    console.log(`Successful safety on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
+  }, [ballValue]);
+
+  const onFoul = useCallback(() => {
+    console.log(`Foul on ${VALUE_TO_DISPLAY_COLOR[ballValue]} ball. ${ballValue < 4 ? 4 : ballValue} points awarded to opponent`);
+  }, [ballValue]);
+
   if (!isOpen) {
     return null;
   }
 
-  const shotResults = ['Miss', 'Long Miss', 'Pot', 'Long Pot', 'Safety', 'Foul'];
+  const shotResults = [
+    {
+      name: 'Miss',
+      onClick: onMiss,
+    },
+    {
+      name: 'Long Miss',
+      onClick: onLongMiss,
+    },
+    {
+      name: 'Pot',
+      onClick: onPot,
+    },
+    {
+      name: 'Long Pot',
+      onClick: onLongPot,
+    },
+    {
+      name: 'Safety',
+      onClick: onSafety,
+    },
+    {
+      name: 'Foul',
+      onClick: onFoul,
+    }
+  ];
 
   return (
     <ul className={className} css={menuStyles}>
-      {shotResults.map(result => (
-        <li css={menuItem} key={result}>{result}</li>
+      {shotResults.map(({name, onClick}) => (
+        <li css={menuItem} key={name} onClick={onClick}>{name}</li>
       ))}
     </ul>
   )
 }
 
 BallMenu.propTypes = {
+  ballValue: PropTypes.number.isRequired,
   className: PropTypes.string,
   isOpen: PropTypes.bool,
   openDirection: PropTypes.oneOf(['bottom', 'left', 'right']),
