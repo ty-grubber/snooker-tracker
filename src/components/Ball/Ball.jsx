@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { sizing } from '../../constants/styles';
 import BallMenu from '../BallMenu';
@@ -13,13 +13,15 @@ export default function Ball({className, menuOpenDirection}) {
     position: absolute;
     width: ${sizing.ballDiameter};
   `
+  const [isOpen, setIsOpen] = useState(false);
+  const onBallClick = useCallback(() => {
+    setIsOpen(!isOpen);
+  }, [isOpen]);
 
   return (
-    <>
-      <BallDiv className={className}>
-        <BallMenu isOpen openDirection={menuOpenDirection} />
-      </BallDiv>
-    </>
+    <BallDiv className={className} onClick={onBallClick}>
+      <BallMenu isOpen={isOpen} openDirection={menuOpenDirection} />
+    </BallDiv>
   );
 }
 
