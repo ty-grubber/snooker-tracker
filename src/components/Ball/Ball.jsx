@@ -27,7 +27,7 @@ export default function Ball({className, menuOpenDirection}) {
 
 Ball.propTypes = {
   className: PropTypes.string,
-  menuOpenDirection: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
+  menuOpenDirection: PropTypes.oneOf(['bottom', 'left', 'right']),
 }
 
 Ball.defaultProps = {

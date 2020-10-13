@@ -7,11 +7,21 @@ export default function BallMenu({ className, isOpen, openDirection }) {
   const menu = css`
     background-color: white;
     color: black;
-    height: 40px;
-    max-width: 40px;
-    position: absolute;
-    top: 0;
     left: 0;
+    margin: 0;
+    padding-left: 0;
+    position: absolute;
+    text-align: left;
+    top: 0;
+  `
+
+  const menuItem = css`
+    border: 1px solid;
+    display: block;
+    font-size: 1.25rem;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 100px;
   `
 
   const rightMenu = css`
@@ -23,20 +33,13 @@ export default function BallMenu({ className, isOpen, openDirection }) {
   `
 
   const leftMenu = css`
-    left: calc(-1 * calc(${sizing.ballDiameter} * 2));
-  `
-
-  const topMenu = css`
-    top: calc(100% + 10px * -1);
+    left: calc(-1 * calc(100px + 20px));
+    text-align: right;
   `
 
   const menuStyles = [menu];
 
   switch (openDirection) {
-    case 'top':
-      menuStyles.push(topMenu);
-      break;
-
     case 'right':
       menuStyles.push(rightMenu);
       break;
@@ -56,15 +59,21 @@ export default function BallMenu({ className, isOpen, openDirection }) {
     return null;
   }
 
+  const shotResults = ['Miss', 'Long Miss', 'Pot', 'Long Pot', 'Safety', 'Foul'];
+
   return (
-    <div className={className} css={menuStyles}>This is the ball menu.</div>
+    <ul className={className} css={menuStyles}>
+      {shotResults.map(result => (
+        <li css={menuItem} key={result}>{result}</li>
+      ))}
+    </ul>
   )
 }
 
 BallMenu.propTypes = {
   className: PropTypes.string,
   isOpen: PropTypes.bool,
-  openDirection: PropTypes.oneOf(['top', 'bottom', 'left', 'right']),
+  openDirection: PropTypes.oneOf(['bottom', 'left', 'right']),
 }
 
 BallMenu.defaultProps = {

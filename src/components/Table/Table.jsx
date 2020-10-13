@@ -5,21 +5,12 @@ import { sizing } from '../../constants/styles';
 import './Table.css';
 
 export default function Table() {
-  const WhiteBall = styled(Ball)`
-    background-color: #fff;
-    left: calc(10% - calc(${sizing.ballDiameter} / 2));
-    top: calc(50% - calc(${sizing.ballDiameter} / 2));
-
-    & > div {
-      background-color: #fff;
-    }
-  `
   const YellowBall = styled(Ball)`
     background-color: #f9e137;
     left: calc(20% - calc(${sizing.ballDiameter} / 2));
     top: calc(75% - calc(${sizing.ballDiameter} / 2));
 
-    & > div {
+    & > ul {
       background-color: #f9e137;
     }
   `
@@ -28,7 +19,7 @@ export default function Table() {
     left: calc(20% - calc(${sizing.ballDiameter} / 2));
     top: calc(25% - calc(${sizing.ballDiameter} / 2));
 
-    & > div {
+    & > ul {
       background-color: #04541d;
       color: #fff;
     }
@@ -38,7 +29,7 @@ export default function Table() {
     left: calc(20% - calc(${sizing.ballDiameter} / 2));
     top: calc(50% - calc(${sizing.ballDiameter} / 2));
 
-    & > div {
+    & > ul {
       background-color: #624024;
       color: #fff;
     }
@@ -48,7 +39,7 @@ export default function Table() {
     left: calc(50% - calc(${sizing.ballDiameter} / 2));
     top: calc(50% - calc(${sizing.ballDiameter} / 2));
 
-    & > div {
+    & > ul {
       background-color: #0632d0;
       color: #fff;
     }
@@ -58,7 +49,7 @@ export default function Table() {
     left: calc(70% - calc(${sizing.ballDiameter} / 2));
     top: calc(50% - calc(${sizing.ballDiameter} / 2));
 
-    & > div {
+    & > ul {
       background-color: #fb6284;
     }
   `
@@ -67,7 +58,7 @@ export default function Table() {
     left: calc(80% - calc(${sizing.ballDiameter} / 2));
     top: calc(50% - calc(${sizing.ballDiameter} / 2));
 
-    & > div {
+    & > ul {
       background-color: #ce0317;
       color: #fff;
     }
@@ -77,7 +68,7 @@ export default function Table() {
     left: calc(90% - calc(${sizing.ballDiameter} / 2));
     top: calc(50% - calc(${sizing.ballDiameter} / 2));
 
-    & > div {
+    & > ul {
       background-color: #000;
       color: #fff;
     }
@@ -89,9 +80,8 @@ export default function Table() {
         <div className="Table-baulk circleBottom" />
         <div className="Table-baulk line" />
         <div className="Table-balls">
-          <WhiteBall menuOpenDirection="right" />
-          <YellowBall menuOpenDirection="right" />
-          <BrownBall menuOpenDirection="right" />
+          <YellowBall menuOpenDirection="bottom" />
+          <BrownBall menuOpenDirection="left" />
           <GreenBall menuOpenDirection="right" />
           <BlueBall />
           <PinkBall />
