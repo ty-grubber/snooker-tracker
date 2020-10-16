@@ -3,7 +3,6 @@ import React from 'react';
 import { BALL_VALUES } from '../../constants/ballValues';
 import { sizing } from '../../constants/styles';
 import Ball from '../Ball';
-import Scoreboard from '../Scoreboard';
 import './Table.css';
 
 export default function Table() {
@@ -76,32 +75,27 @@ export default function Table() {
     }
   `
   return (
-    <div>
-      <div className="Scoreboard">
-        <Scoreboard />
-      </div>
-      <div className="Table-outside">
-        <div className="Table-inside">
-          <div className="Table-baulk circleTop" />
-          <div className="Table-baulk circleBottom" />
-          <div className="Table-baulk line" />
-          <div className="Table-balls">
-            <GreenBall menuOpenDirection="right" value={BALL_VALUES.GREEN} />
-            <BrownBall menuOpenDirection="left" value={BALL_VALUES.BROWN} />
-            <YellowBall menuOpenDirection="bottom" value={BALL_VALUES.YELLOW} />
-            <BlueBall value={BALL_VALUES.BLUE} />
-            <PinkBall value={BALL_VALUES.PINK} />
-            <RedBall value={BALL_VALUES.RED} />
-            <BlackBall value={BALL_VALUES.BLACK} />
-          </div>
+    <div className="Table-outside">
+      <div className="Table-inside">
+        <div className="Table-baulk circleTop" />
+        <div className="Table-baulk circleBottom" />
+        <div className="Table-baulk line" />
+        <div className="Table-balls">
+          <GreenBall menuOpenDirection="right" value={BALL_VALUES.GREEN} />
+          <BrownBall menuOpenDirection="left" value={BALL_VALUES.BROWN} />
+          <YellowBall menuOpenDirection="bottom" value={BALL_VALUES.YELLOW} />
+          <BlueBall value={BALL_VALUES.BLUE} />
+          <PinkBall value={BALL_VALUES.PINK} />
+          <RedBall value={BALL_VALUES.RED} />
+          <BlackBall value={BALL_VALUES.BLACK} />
         </div>
-        <div id="left-top" className="Table-pocket" />
-        <div id="center-top" className="Table-pocket" />
-        <div id="right-top" className="Table-pocket" />
-        <div id="left-bottom" className="Table-pocket" />
-        <div id="center-bottom" className="Table-pocket" />
-        <div id="right-bottom" className="Table-pocket" />
       </div>
+      <div id="left-top" className="Table-pocket" />
+      <div id="center-top" className="Table-pocket" />
+      <div id="right-top" className="Table-pocket" />
+      <div id="left-bottom" className="Table-pocket" />
+      <div id="center-bottom" className="Table-pocket" />
+      <div id="right-bottom" className="Table-pocket" />
     </div>
   )
 }
