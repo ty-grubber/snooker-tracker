@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import React from 'react';
-import Ball from '../Ball';
-import { sizing } from '../../constants/styles';
-import './Table.css';
 import { BALL_VALUES } from '../../constants/ballValues';
+import { sizing } from '../../constants/styles';
+import Ball from '../Ball';
+import './Table.css';
 
 export default function Table() {
   const YellowBall = styled(Ball)`
