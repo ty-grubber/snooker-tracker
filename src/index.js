@@ -4,10 +4,11 @@ import { render } from 'react-dom';
 import App from './components/App';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
+import { statsCache } from './cache';
 
 const client = new ApolloClient({
   uri: '/graphql',
-  cache: new InMemoryCache()
+  cache: statsCache,
 });
 
 render(
