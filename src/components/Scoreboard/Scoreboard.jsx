@@ -1,5 +1,7 @@
 /** @jsx jsx */
+import { useReactiveVar } from '@apollo/client';
 import { css, jsx } from '@emotion/core';
+import { leftPlayerStats } from '../../cache';
 
 export default function Scoreboard() {
   const scoreboardStyles = css`
@@ -45,6 +47,8 @@ export default function Scoreboard() {
     border-right: 2px solid black;
   `
 
+  const lpData = useReactiveVar(leftPlayerStats);
+
   return (
     <div css={scoreboardStyles}>
       <div css={playerSectionStyles}>
@@ -52,7 +56,7 @@ export default function Scoreboard() {
           <span>Player 1 name</span>
         </div>
         <div css={playerScoreStyles}>
-          <span>P1 Score</span>
+          <span>{lpData?.score || 0}</span>
         </div>
       </div>
       <div css={matchSectionStyles}>

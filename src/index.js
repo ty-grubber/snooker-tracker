@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { ApolloClient, ApolloProvider } from '@apollo/client';
 import React from 'react';
 import { render } from 'react-dom';
 import App from './components/App';

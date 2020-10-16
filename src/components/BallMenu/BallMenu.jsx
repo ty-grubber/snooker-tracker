@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { css, jsx } from '@emotion/core';
 import { sizing } from '../../constants/styles';
 import { VALUE_TO_DISPLAY_COLOR } from '../../constants/ballValues';
+import { leftPlayerStats } from '../../cache';
 
 export default function BallMenu({ ballValue, className, isOpen, openDirection }) {
   const menu = css`
@@ -67,6 +68,11 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
 
   const onPot = useCallback(() => {
     console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}`);
+    const currentScore = leftPlayerStats()?.score || 0;
+    leftPlayerStats({
+      ...leftPlayerStats,
+      score: currentScore + ballValue,
+    });
   }, [ballValue]);
 
   const onLongPot = useCallback(() => {
