@@ -1,5 +1,7 @@
 /** @jsx jsx */
+import { useReactiveVar } from '@apollo/client';
 import { css, jsx } from '@emotion/core';
+import { leftPlayerStats, rightPlayerStats, matchStats, gameInfo } from '../../cache';
 
 export default function Scoreboard() {
   const scoreboardStyles = css`
@@ -36,8 +38,13 @@ export default function Scoreboard() {
     font-weight: bold;
   `
 
+  const activePlayerStyles = css`
+    border-bottom: 3px solid brown;
+  `
+
   const playerScoreStyles = css`
     background-color: lightyellow;
+    width: 40px;
   `
 
   const matchSectionStyles = css`
@@ -45,25 +52,39 @@ export default function Scoreboard() {
     border-right: 2px solid black;
   `
 
+  const lpData = useReactiveVar(leftPlayerStats);
+  const rpData = useReactiveVar(rightPlayerStats);
+  const matchData = useReactiveVar(matchStats);
+  const currGameInfo = useReactiveVar(gameInfo);
+
+  const leftPlayerNameStyles = [playerNameStyles];
+  const rightPlayerNameStyles = [playerNameStyles];
+
+  if (currGameInfo.leftPlayerActive) {
+    leftPlayerNameStyles.push(activePlayerStyles);
+  } else {
+    rightPlayerNameStyles.push(activePlayerStyles);
+  }
+
   return (
     <div css={scoreboardStyles}>
       <div css={playerSectionStyles}>
-        <div css={playerNameStyles}>
-          <span>Player 1 name</span>
+        <div css={leftPlayerNameStyles}>
+          <span>{lpData.name}</span>
         </div>
         <div css={playerScoreStyles}>
-          <span>P1 Score</span>
+          <span>{lpData.score || 0}</span>
         </div>
       </div>
       <div css={matchSectionStyles}>
-        <span>Current Match section</span>
+        <span>{`0 - (${matchData.totalFrames || 9}) - 0`}</span>
       </div>
       <div css={playerSectionStyles}>
         <div css={playerScoreStyles}>
-          <span>P2 Score</span>
+          <span>{rpData.score || 0}</span>
         </div>
-        <div css={playerNameStyles}>
-          <span>Player 2 name</span>
+        <div css={rightPlayerNameStyles}>
+          <span>{rpData.name}</span>
         </div>
       </div>
     </div>
