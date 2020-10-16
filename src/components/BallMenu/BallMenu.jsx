@@ -63,24 +63,25 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
   const rpData = useReactiveVar(rightPlayerStats);
   const currGameInfo = useReactiveVar(gameInfo);
 
-  const onMiss = useCallback(() => {
-    console.log(`Missed shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
+  const switchPlayer = useCallback(() => {
     gameInfo({
       ...currGameInfo,
       leftPlayerActive: !currGameInfo.leftPlayerActive,
     });
-  }, [ballValue, currGameInfo]);
+  }, [currGameInfo]);
+
+  const onMiss = useCallback(() => {
+    console.log(`Missed shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
+    switchPlayer();
+  }, [ballValue, switchPlayer]);
 
   const onLongMiss = useCallback(() => {
     console.log(`Missed long shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
-    gameInfo({
-      ...currGameInfo,
-      leftPlayerActive: !currGameInfo.leftPlayerActive,
-    });
-  }, [ballValue, currGameInfo]);
+    switchPlayer();
+  }, [ballValue, switchPlayer]);
 
   const onPot = useCallback(() => {
-    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}`);
+    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}.`);
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
@@ -95,7 +96,7 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
   }, [ballValue, currGameInfo.leftPlayerActive, lpData, rpData]);
 
   const onLongPot = useCallback(() => {
-    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]} with long shot. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}`);
+    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]} with long shot. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}.`);
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
@@ -111,11 +112,25 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
 
   const onSafety = useCallback(() => {
     console.log(`Successful safety on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
-  }, [ballValue]);
+    switchPlayer();
+  }, [ballValue, switchPlayer]);
 
   const onFoul = useCallback(() => {
-    console.log(`Foul on ${VALUE_TO_DISPLAY_COLOR[ballValue]} ball. ${ballValue < 4 ? 4 : ballValue} points awarded to opponent`);
-  }, [ballValue]);
+    const foulValue = Math.max(4, ballValue);
+    console.log(`Foul on ${VALUE_TO_DISPLAY_COLOR[ballValue]} ball. ${foulValue} points awarded to opponent.`);
+    if (currGameInfo.leftPlayerActive) {
+      rightPlayerStats({
+        ...rpData,
+        score: rpData.score + foulValue,
+      });
+    } else {
+      leftPlayerStats({
+        ...lpData,
+        score: lpData.score + foulValue,
+      });
+    }
+    switchPlayer();
+  }, [ballValue, currGameInfo.leftPlayerActive, lpData, rpData, switchPlayer]);
 
   if (!isOpen) {
     return null;
