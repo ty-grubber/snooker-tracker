@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import { css, jsx } from '@emotion/core';
 import { sizing } from '../../constants/styles';
 import { VALUE_TO_DISPLAY_COLOR } from '../../constants/ballValues';
-import { leftPlayerStats } from '../../cache';
+import { leftPlayerStats, rightPlayerStats, gameInfo } from '../../cache';
+import { useReactiveVar } from '@apollo/client';
 
 export default function BallMenu({ ballValue, className, isOpen, openDirection }) {
   const menu = css`
@@ -58,26 +59,55 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
     default:
   }
 
+  const lpData = useReactiveVar(leftPlayerStats);
+  const rpData = useReactiveVar(rightPlayerStats);
+  const currGameInfo = useReactiveVar(gameInfo);
+
   const onMiss = useCallback(() => {
     console.log(`Missed shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
-  }, [ballValue]);
+    gameInfo({
+      ...currGameInfo,
+      leftPlayerActive: !currGameInfo.leftPlayerActive,
+    });
+  }, [ballValue, currGameInfo]);
 
   const onLongMiss = useCallback(() => {
     console.log(`Missed long shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
-  }, [ballValue]);
+    gameInfo({
+      ...currGameInfo,
+      leftPlayerActive: !currGameInfo.leftPlayerActive,
+    });
+  }, [ballValue, currGameInfo]);
 
   const onPot = useCallback(() => {
     console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}`);
-    const currentScore = leftPlayerStats()?.score || 0;
-    leftPlayerStats({
-      ...leftPlayerStats,
-      score: currentScore + ballValue,
-    });
-  }, [ballValue]);
+    if (currGameInfo.leftPlayerActive) {
+      leftPlayerStats({
+        ...lpData,
+        score: lpData.score + ballValue,
+      });
+    } else {
+      rightPlayerStats({
+        ...rpData,
+        score: rpData.score + ballValue,
+      });
+    }
+  }, [ballValue, currGameInfo.leftPlayerActive, lpData, rpData]);
 
   const onLongPot = useCallback(() => {
     console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]} with long shot. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}`);
-  }, [ballValue]);
+    if (currGameInfo.leftPlayerActive) {
+      leftPlayerStats({
+        ...lpData,
+        score: lpData.score + ballValue,
+      });
+    } else {
+      rightPlayerStats({
+        ...rpData,
+        score: rpData.score + ballValue,
+      });
+    }
+  }, [ballValue, currGameInfo.leftPlayerActive, lpData, rpData]);
 
   const onSafety = useCallback(() => {
     console.log(`Successful safety on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
