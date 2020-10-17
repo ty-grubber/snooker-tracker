@@ -2,11 +2,23 @@ import { InMemoryCache, makeVar } from "@apollo/client";
 
 export const leftPlayerStats = makeVar({
   name: 'Tyler',
-  score: 0
+  score: 0,
+  shots: {
+    attempted: 0,
+    potted: 0,
+    longAttempted: 0,
+    longPotted: 0
+  }
 });
 export const rightPlayerStats = makeVar({
   name: 'George',
-  score: 0
+  score: 0,
+  shots: {
+    attempted: 0,
+    potted: 0,
+    longAttempted: 0,
+    longPotted: 0
+  }
 });
 export const matchStats = makeVar({
   totalFrames: 9
