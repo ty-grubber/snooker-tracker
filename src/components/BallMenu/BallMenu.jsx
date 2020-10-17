@@ -72,13 +72,49 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
 
   const onMiss = useCallback(() => {
     console.log(`Missed shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
+    if (currGameInfo.leftPlayerActive) {
+      leftPlayerStats({
+        ...lpData,
+        shots: {
+          ...lpData.shots,
+          attempted: lpData.shots.attempted + 1,
+        },
+      });
+    } else {
+      rightPlayerStats({
+        ...rpData,
+        shots: {
+          ...rpData.shots,
+          attempted: rpData.shots.attempted + 1,
+        },
+      });
+    }
     switchPlayer();
-  }, [ballValue, switchPlayer]);
+  }, [ballValue, currGameInfo.leftPlayerActive, lpData, rpData, switchPlayer]);
 
   const onLongMiss = useCallback(() => {
     console.log(`Missed long shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
+    if (currGameInfo.leftPlayerActive) {
+      leftPlayerStats({
+        ...lpData,
+        shots: {
+          ...lpData.shots,
+          attempted: lpData.shots.attempted + 1,
+          longAttempted: lpData.shots.longAttempted + 1,
+        },
+      });
+    } else {
+      rightPlayerStats({
+        ...rpData,
+        shots: {
+          ...rpData.shots,
+          attempted: rpData.shots.attempted + 1,
+          longAttempted: rpData.shots.longAttempted + 1,
+        },
+      });
+    }
     switchPlayer();
-  }, [ballValue, switchPlayer]);
+  }, [ballValue, currGameInfo.leftPlayerActive, lpData, rpData, switchPlayer]);
 
   const onPot = useCallback(() => {
     console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}.`);
@@ -86,11 +122,21 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
       leftPlayerStats({
         ...lpData,
         score: lpData.score + ballValue,
+        shots: {
+          ...lpData.shots,
+          attempted: lpData.shots.attempted + 1,
+          potted: lpData.shots.potted + 1,
+        },
       });
     } else {
       rightPlayerStats({
         ...rpData,
         score: rpData.score + ballValue,
+        shots: {
+          ...rpData.shots,
+          attempted: rpData.shots.attempted + 1,
+          potted: rpData.shots.potted + 1,
+        },
       });
     }
   }, [ballValue, currGameInfo.leftPlayerActive, lpData, rpData]);
@@ -101,11 +147,25 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
       leftPlayerStats({
         ...lpData,
         score: lpData.score + ballValue,
+        shots: {
+          ...lpData.shots,
+          attempted: lpData.shots.attempted + 1,
+          potted: lpData.shots.potted + 1,
+          longAttempted: lpData.shots.longAttempted + 1,
+          longPotted: lpData.shots.longPotted + 1,
+        },
       });
     } else {
       rightPlayerStats({
         ...rpData,
         score: rpData.score + ballValue,
+        shots: {
+          ...rpData.shots,
+          attempted: rpData.shots.attempted + 1,
+          potted: rpData.shots.potted + 1,
+          longAttempted: lpData.shots.longAttempted + 1,
+          longPotted: lpData.shots.longPotted + 1,
+        },
       });
     }
   }, [ballValue, currGameInfo.leftPlayerActive, lpData, rpData]);
