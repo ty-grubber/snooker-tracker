@@ -18,20 +18,24 @@ export default function RedRack() {
     setIsOpen(!isOpen);
   }, [isOpen]);
 
+  const handleAction = useCallback(() => {
+    setIsOpen(false);
+  }, [])
+
   const currGameInfo = useReactiveVar(gameInfo);
 
   const menuVerticalOffsetMultiplier = useMemo(() => {
     switch (true) {
-      case currGameInfo.redsLeft > 10:
-        return 2.5;
-      case currGameInfo.redsLeft > 6:
-        return 2;
-      case currGameInfo.redsLeft > 3:
-        return 1.5;
-      case currGameInfo.redsLeft > 1:
-        return 1;
-      default:
+      case currGameInfo.redsLeft > 14:
+        return 0;
+      case currGameInfo.redsLeft > 9:
         return 0.5;
+      case currGameInfo.redsLeft > 5:
+        return 1;
+      case currGameInfo.redsLeft > 2:
+        return 1.5;
+      default:
+        return 2;
     }
   }, [currGameInfo.redsLeft]);
 
@@ -113,19 +117,25 @@ export default function RedRack() {
     height: calc(${sizing.ballDimension} * 5);
     left: calc(78% - calc(${sizing.ballDiameter} / 2));
     position: absolute;
-    top: calc(50% - calc(${sizing.ballDimension} * ${menuVerticalOffsetMultiplier}));
+    top: calc(50% - calc(${sizing.ballDimension} * 2.5));
     width: calc(${sizing.ballDimension} * 5);
+
+    & > div {
+      cursor: pointer;
+    }
 
     & > ul {
       background-color: #ce0317;
       color: #fff;
+      cursor: pointer;
+      top: calc(100% + calc(${sizing.ballDiameter} / 2) - calc(${sizing.ballDimension} * ${menuVerticalOffsetMultiplier}));
     }
   `
 
   return (
     <div css={container}>
       {reds}
-      <BallMenu ballValue={1} isOpen={isOpen} />
+      <BallMenu ballValue={1} isOpen={isOpen} onAction={handleAction} />
     </div>
   );
 }

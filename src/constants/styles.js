@@ -6,5 +6,6 @@ const sizingValues = {
 export const sizing = {
   ballDiameter: `${sizingValues.ballDiameter}px`,
   ballBorder: `${sizingValues.ballBorder}px`,
-  ballDimension: `${sizingValues.ballDiameter + sizingValues.ballBorder}px`
+  ballDimension: `${sizingValues.ballDiameter + sizingValues.ballBorder}px`,
+  ballMenuWidth: '100px',
 };

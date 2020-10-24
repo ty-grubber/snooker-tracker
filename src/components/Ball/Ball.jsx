@@ -19,9 +19,13 @@ export default function Ball({className, menuOpenDirection, value}) {
     setIsOpen(!isOpen);
   }, [isOpen]);
 
+  const handleAction = useCallback(() => {
+    setIsOpen(false);
+  }, [])
+
   return (
     <BallDiv className={className} onClick={onBallClick}>
-      <BallMenu ballValue={value} isOpen={isOpen} openDirection={menuOpenDirection} />
+      <BallMenu ballValue={value} isOpen={isOpen} onAction={handleAction} openDirection={menuOpenDirection} />
     </BallDiv>
   );
 }
