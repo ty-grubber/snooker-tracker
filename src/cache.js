@@ -25,6 +25,7 @@ export const matchStats = makeVar({
 });
 export const gameInfo = makeVar({
   leftPlayerActive: true,
+  redsLeft: 15,
 })
 
 export const statsCache = new InMemoryCache({

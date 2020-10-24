@@ -1,3 +1,11 @@
+const sizingValues = {
+  ballDiameter: 25,
+  ballBorder: 1,
+};
+
 export const sizing = {
-  ballDiameter: '25px'
-}
+  ballDiameter: `${sizingValues.ballDiameter}px`,
+  ballBorder: `${sizingValues.ballBorder}px`,
+  ballDimension: `${sizingValues.ballDiameter + sizingValues.ballBorder}px`,
+  ballMenuWidth: '100px',
+};

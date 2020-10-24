@@ -1,13 +1,13 @@
 /** @jsx jsx */
-import { useCallback } from 'react';
-import PropTypes from 'prop-types';
-import { css, jsx } from '@emotion/core';
-import { sizing } from '../../constants/styles';
-import { VALUE_TO_DISPLAY_COLOR } from '../../constants/ballValues';
-import { leftPlayerStats, rightPlayerStats, gameInfo } from '../../cache';
 import { useReactiveVar } from '@apollo/client';
+import { css, jsx } from '@emotion/core';
+import PropTypes from 'prop-types';
+import { useCallback } from 'react';
+import { gameInfo, leftPlayerStats, rightPlayerStats } from '../../cache';
+import { BALL_VALUES, VALUE_TO_DISPLAY_COLOR } from '../../constants/ballValues';
+import { sizing } from '../../constants/styles';
 
-export default function BallMenu({ ballValue, className, isOpen, openDirection }) {
+export default function BallMenu({ ballValue, className, isOpen, onAction, openDirection }) {
   const menu = css`
     background-color: white;
     color: black;
@@ -25,19 +25,19 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
     font-size: 1.25rem;
     padding-left: 5px;
     padding-right: 5px;
-    width: 100px;
+    width: ${sizing.ballMenuWidth};
   `
 
   const rightMenu = css`
-    left: calc(${sizing.ballDiameter} + 10px);
+    left: calc(${sizing.ballDimension} * 1.5);
   `
 
   const bottomMenu = css`
-    top: calc(100% + 10px);
+    top: calc(100% + calc(${sizing.ballDimension} / 2));
   `
 
   const leftMenu = css`
-    left: calc(-1 * calc(100px + 20px));
+    left: calc(-1 * calc(${sizing.ballMenuWidth} + ${sizing.ballDimension}));
     text-align: right;
   `
 
@@ -90,7 +90,8 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
       });
     }
     switchPlayer();
-  }, [ballValue, currGameInfo.leftPlayerActive, lpData, rpData, switchPlayer]);
+    onAction();
+  }, [ballValue, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
 
   const onLongMiss = useCallback(() => {
     console.log(`Missed long shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
@@ -114,7 +115,8 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
       });
     }
     switchPlayer();
-  }, [ballValue, currGameInfo.leftPlayerActive, lpData, rpData, switchPlayer]);
+    onAction();
+  }, [ballValue, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
 
   const onPot = useCallback(() => {
     console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}.`);
@@ -139,7 +141,15 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
         },
       });
     }
-  }, [ballValue, currGameInfo.leftPlayerActive, lpData, rpData]);
+
+    if (ballValue === BALL_VALUES.RED) {
+      gameInfo({
+        ...currGameInfo,
+        redsLeft: currGameInfo.redsLeft - 1,
+      })
+    }
+    onAction();
+  }, [ballValue, currGameInfo, lpData, onAction, rpData]);
 
   const onLongPot = useCallback(() => {
     console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]} with long shot. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}.`);
@@ -168,12 +178,21 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
         },
       });
     }
-  }, [ballValue, currGameInfo.leftPlayerActive, lpData, rpData]);
+
+    if (ballValue === BALL_VALUES.RED) {
+      gameInfo({
+        ...currGameInfo,
+        redsLeft: currGameInfo.redsLeft - 1,
+      })
+    }
+    onAction();
+  }, [ballValue, currGameInfo, lpData, onAction, rpData]);
 
   const onSafety = useCallback(() => {
     console.log(`Successful safety on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
     switchPlayer();
-  }, [ballValue, switchPlayer]);
+    onAction();
+  }, [ballValue, onAction, switchPlayer]);
 
   const onFoul = useCallback(() => {
     const foulValue = Math.max(4, ballValue);
@@ -190,7 +209,8 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
       });
     }
     switchPlayer();
-  }, [ballValue, currGameInfo.leftPlayerActive, lpData, rpData, switchPlayer]);
+    onAction();
+  }, [ballValue, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
 
   if (!isOpen) {
     return null;
@@ -236,11 +256,13 @@ BallMenu.propTypes = {
   ballValue: PropTypes.number.isRequired,
   className: PropTypes.string,
   isOpen: PropTypes.bool,
+  onAction: PropTypes.func,
   openDirection: PropTypes.oneOf(['bottom', 'left', 'right']),
 }
 
 BallMenu.defaultProps = {
   className: undefined,
   isOpen: false,
+  onAction: () => { },
   openDirection: 'bottom',
 }

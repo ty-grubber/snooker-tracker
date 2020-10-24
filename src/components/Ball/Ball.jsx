@@ -4,23 +4,28 @@ import PropTypes from 'prop-types';
 import { sizing } from '../../constants/styles';
 import BallMenu from '../BallMenu';
 
+export const BallDiv = styled.div`
+  border: ${sizing.ballBorder} solid #000;
+  border-radius: ${sizing.ballDiameter};
+  cursor: pointer;
+  height: ${sizing.ballDiameter};
+  position: absolute;
+  width: ${sizing.ballDiameter};
+`
+
 export default function Ball({className, menuOpenDirection, value}) {
-  const BallDiv = styled.div`
-    border: 1px solid #000;
-    border-radius: ${sizing.ballDiameter};
-    cursor: pointer;
-    height: ${sizing.ballDiameter};
-    position: absolute;
-    width: ${sizing.ballDiameter};
-  `
   const [isOpen, setIsOpen] = useState(false);
   const onBallClick = useCallback(() => {
     setIsOpen(!isOpen);
   }, [isOpen]);
 
+  const handleAction = useCallback(() => {
+    setIsOpen(false);
+  }, [])
+
   return (
     <BallDiv className={className} onClick={onBallClick}>
-      <BallMenu ballValue={value} isOpen={isOpen} openDirection={menuOpenDirection} />
+      <BallMenu ballValue={value} isOpen={isOpen} onAction={handleAction} openDirection={menuOpenDirection} />
     </BallDiv>
   );
 }
