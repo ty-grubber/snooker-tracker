@@ -1,11 +1,11 @@
 /** @jsx jsx */
-import { useCallback } from 'react';
-import PropTypes from 'prop-types';
-import { css, jsx } from '@emotion/core';
-import { sizing } from '../../constants/styles';
-import { VALUE_TO_DISPLAY_COLOR } from '../../constants/ballValues';
-import { leftPlayerStats, rightPlayerStats, gameInfo } from '../../cache';
 import { useReactiveVar } from '@apollo/client';
+import { css, jsx } from '@emotion/core';
+import PropTypes from 'prop-types';
+import { useCallback } from 'react';
+import { gameInfo, leftPlayerStats, rightPlayerStats } from '../../cache';
+import { VALUE_TO_DISPLAY_COLOR } from '../../constants/ballValues';
+import { sizing } from '../../constants/styles';
 
 export default function BallMenu({ ballValue, className, isOpen, openDirection }) {
   const menu = css`
