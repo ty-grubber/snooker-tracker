@@ -29,7 +29,7 @@ export default function BallMenu({ ballValue, className, isOpen, openDirection }
   `
 
   const rightMenu = css`
-    left: calc(${sizing.ballDiameter} + 10px);
+    left: calc(${sizing.ballDimension} + 10px);
   `
 
   const bottomMenu = css`
