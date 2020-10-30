@@ -96,7 +96,10 @@ export default function Scoreboard() {
     <div css={scoreboardStyles}>
       <div css={playerSectionStyles}>
         <div css={leftPlayerNameStyles} onClick={onLeftPlayerClick}>
-          <span>{lpData.name}</span>
+          <span>
+            {lpData.name}
+            {currGameInfo.leftPlayerActive && ` - (${currGameInfo.validBallType})`}
+          </span>
         </div>
         <div css={playerScoreStyles}>
           <span>{lpData.score || 0}</span>
@@ -110,7 +113,10 @@ export default function Scoreboard() {
           <span>{rpData.score || 0}</span>
         </div>
         <div css={rightPlayerNameStyles} onClick={onRightPlayerClick}>
-          <span>{rpData.name}</span>
+          <span>
+            {rpData.name}
+            {!currGameInfo.leftPlayerActive && ` - (${currGameInfo.validBallType})`}
+          </span>
         </div>
       </div>
     </div>

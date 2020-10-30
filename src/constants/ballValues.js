@@ -17,3 +17,9 @@ export const VALUE_TO_DISPLAY_COLOR = {
   6: 'Pink',
   7: 'Black',
 }
+
+export const BALL_TYPES = {
+  COLOR: 'Color',
+  CUE: 'Cue',
+  RED: 'Red',
+}

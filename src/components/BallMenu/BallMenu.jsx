@@ -2,9 +2,10 @@
 import { useReactiveVar } from '@apollo/client';
 import { css, jsx } from '@emotion/core';
 import PropTypes from 'prop-types';
+import { useMemo } from 'react';
 import { useCallback } from 'react';
 import { gameInfo, leftPlayerStats, rightPlayerStats } from '../../cache';
-import { BALL_VALUES, VALUE_TO_DISPLAY_COLOR } from '../../constants/ballValues';
+import { BALL_TYPES, BALL_VALUES, VALUE_TO_DISPLAY_COLOR } from '../../constants/ballValues';
 import { sizing } from '../../constants/styles';
 
 export default function BallMenu({ ballValue, className, isOpen, onAction, openDirection }) {
@@ -63,11 +64,24 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
   const rpData = useReactiveVar(rightPlayerStats);
   const currGameInfo = useReactiveVar(gameInfo);
 
-  const switchPlayer = useCallback((newPointsLeft) => {
+  const isValidBallType = useMemo(() => {
+    if (ballValue === BALL_VALUES.RED && currGameInfo.validBallType === BALL_TYPES.RED) {
+      return true;
+    }
+
+    if (ballValue !== BALL_VALUES.RED && currGameInfo.validBallType === BALL_TYPES.COLOR) {
+      return true;
+    }
+
+    return false;
+  }, [ballValue, currGameInfo.validBallType])
+
+  const switchPlayer = useCallback((newPointsLeft = currGameInfo.pointsLeft) => {
     gameInfo({
       ...currGameInfo,
       leftPlayerActive: !currGameInfo.leftPlayerActive,
       pointsLeft: newPointsLeft,
+      validBallType: BALL_TYPES.RED,
     });
   }, [currGameInfo]);
 
@@ -142,7 +156,8 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
   }, [ballValue, currGameInfo, lpData, onAction, rpData, switchPlayer]);
 
   const onPot = useCallback(() => {
-    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}.`);
+    const wasRedPotted = ballValue === BALL_VALUES.RED;
+    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${wasRedPotted ? 'point' : 'points'}.`);
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
@@ -175,14 +190,16 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
 
     gameInfo({
       ...currGameInfo,
-      redsLeft: ballValue === BALL_VALUES.RED ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
-      pointsLeft: ballValue === BALL_VALUES.RED ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
+      redsLeft: wasRedPotted ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
+      pointsLeft: wasRedPotted ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
+      validBallType: wasRedPotted ? BALL_TYPES.COLOR : BALL_TYPES.RED,
     });
     onAction();
   }, [ballValue, currGameInfo, lpData, onAction, rpData]);
 
   const onLongPot = useCallback(() => {
-    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]} with long shot. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}.`);
+    const wasRedPotted = ballValue === BALL_VALUES.RED;
+    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]} with long shot. ${ballValue} ${wasRedPotted ? 'point' : 'points'}.`);
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
@@ -217,8 +234,9 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
 
     gameInfo({
       ...currGameInfo,
-      redsLeft: ballValue === BALL_VALUES.RED ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
-      pointsLeft: ballValue === BALL_VALUES.RED ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
+      redsLeft: wasRedPotted ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
+      pointsLeft: wasRedPotted ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
+      validBallType: wasRedPotted ? BALL_TYPES.COLOR : BALL_TYPES.RED,
     });
     onAction();
   }, [ballValue, currGameInfo, lpData, onAction, rpData]);
@@ -270,7 +288,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     return null;
   }
 
-  const shotResults = [
+  const validBallShotResults = [
     {
       name: 'Miss',
       onClick: onMiss,
@@ -290,12 +308,17 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     {
       name: 'Safety',
       onClick: onSafety,
-    },
+    }
+  ];
+
+  const foulShotResult = [
     {
       name: 'Foul',
       onClick: onFoul,
     }
   ];
+
+  const shotResults = isValidBallType ? validBallShotResults.concat(foulShotResult) : foulShotResult;
 
   return (
     <ul className={className} css={menuStyles}>
