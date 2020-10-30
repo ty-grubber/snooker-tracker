@@ -79,6 +79,10 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
           ...lpData.shots,
           attempted: lpData.shots.attempted + 1,
         },
+        break: {
+          ...lpData.break,
+          current: 0,
+        }
       });
     } else {
       rightPlayerStats({
@@ -87,6 +91,10 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
           ...rpData.shots,
           attempted: rpData.shots.attempted + 1,
         },
+        break: {
+          ...rpData.break,
+          current: 0,
+        }
       });
     }
     switchPlayer();
@@ -103,6 +111,10 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
           attempted: lpData.shots.attempted + 1,
           longAttempted: lpData.shots.longAttempted + 1,
         },
+        break: {
+          ...lpData.break,
+          current: 0,
+        }
       });
     } else {
       rightPlayerStats({
@@ -112,6 +124,10 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
           attempted: rpData.shots.attempted + 1,
           longAttempted: rpData.shots.longAttempted + 1,
         },
+        break: {
+          ...rpData.break,
+          current: 0,
+        }
       });
     }
     switchPlayer();
