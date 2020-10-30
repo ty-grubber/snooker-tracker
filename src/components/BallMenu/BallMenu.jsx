@@ -145,6 +145,10 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
           attempted: lpData.shots.attempted + 1,
           potted: lpData.shots.potted + 1,
         },
+        break: {
+          current: lpData.break.current + ballValue,
+          longest: Math.max(lpData.break.current + ballValue, lpData.break.longest),
+        },
       });
     } else {
       rightPlayerStats({
@@ -154,6 +158,10 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
           ...rpData.shots,
           attempted: rpData.shots.attempted + 1,
           potted: rpData.shots.potted + 1,
+        },
+        break: {
+          current: rpData.break.current + ballValue,
+          longest: Math.max(rpData.break.current + ballValue, rpData.break.longest),
         },
       });
     }
@@ -174,11 +182,14 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
         ...lpData,
         score: lpData.score + ballValue,
         shots: {
-          ...lpData.shots,
           attempted: lpData.shots.attempted + 1,
           potted: lpData.shots.potted + 1,
           longAttempted: lpData.shots.longAttempted + 1,
           longPotted: lpData.shots.longPotted + 1,
+        },
+        break: {
+          current: lpData.break.current + ballValue,
+          longest: Math.max(lpData.break.current + ballValue, lpData.break.longest),
         },
       });
     } else {
@@ -186,11 +197,14 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
         ...rpData,
         score: rpData.score + ballValue,
         shots: {
-          ...rpData.shots,
           attempted: rpData.shots.attempted + 1,
           potted: rpData.shots.potted + 1,
           longAttempted: lpData.shots.longAttempted + 1,
           longPotted: lpData.shots.longPotted + 1,
+        },
+        break: {
+          current: rpData.break.current + ballValue,
+          longest: Math.max(rpData.break.current + ballValue, rpData.break.longest),
         },
       });
     }
