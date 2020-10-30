@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { useReactiveVar } from '@apollo/client';
 import { css, jsx } from '@emotion/core';
+import { useEffect } from 'react';
 import { useCallback } from 'react';
 import { leftPlayerStats, rightPlayerStats, matchStats, gameInfo } from '../../cache';
 
@@ -86,6 +87,10 @@ export default function Scoreboard() {
   const onRightPlayerClick = useCallback(() => {
     onPlayerClick(rpData);
   }, [rpData, onPlayerClick]);
+
+  useEffect(() => {
+    console.log(`${currGameInfo.pointsLeft} points left on table.`)
+  }, [currGameInfo.pointsLeft]);
 
   return (
     <div css={scoreboardStyles}>

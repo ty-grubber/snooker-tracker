@@ -63,10 +63,11 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
   const rpData = useReactiveVar(rightPlayerStats);
   const currGameInfo = useReactiveVar(gameInfo);
 
-  const switchPlayer = useCallback(() => {
+  const switchPlayer = useCallback((newPointsLeft) => {
     gameInfo({
       ...currGameInfo,
       leftPlayerActive: !currGameInfo.leftPlayerActive,
+      pointsLeft: newPointsLeft,
     });
   }, [currGameInfo]);
 
@@ -97,9 +98,12 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
         }
       });
     }
-    switchPlayer();
+
+    const newPointsLeft = currGameInfo.pointsLeft - (ballValue === BALL_VALUES.RED ? 0 : BALL_VALUES.BLACK);
+
+    switchPlayer(newPointsLeft);
     onAction();
-  }, [ballValue, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
+  }, [ballValue, currGameInfo, lpData, onAction, rpData, switchPlayer]);
 
   const onLongMiss = useCallback(() => {
     console.log(`Missed long shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
@@ -130,9 +134,12 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
         }
       });
     }
-    switchPlayer();
+
+    const newPointsLeft = currGameInfo.pointsLeft - (ballValue === BALL_VALUES.RED ? 0 : BALL_VALUES.BLACK);
+
+    switchPlayer(newPointsLeft);
     onAction();
-  }, [ballValue, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
+  }, [ballValue, currGameInfo, lpData, onAction, rpData, switchPlayer]);
 
   const onPot = useCallback(() => {
     console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}.`);
@@ -166,12 +173,11 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
       });
     }
 
-    if (ballValue === BALL_VALUES.RED) {
-      gameInfo({
-        ...currGameInfo,
-        redsLeft: currGameInfo.redsLeft - 1,
-      })
-    }
+    gameInfo({
+      ...currGameInfo,
+      redsLeft: ballValue === BALL_VALUES.RED ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
+      pointsLeft: ballValue === BALL_VALUES.RED ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
+    });
     onAction();
   }, [ballValue, currGameInfo, lpData, onAction, rpData]);
 
@@ -209,12 +215,11 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
       });
     }
 
-    if (ballValue === BALL_VALUES.RED) {
-      gameInfo({
-        ...currGameInfo,
-        redsLeft: currGameInfo.redsLeft - 1,
-      })
-    }
+    gameInfo({
+      ...currGameInfo,
+      redsLeft: ballValue === BALL_VALUES.RED ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
+      pointsLeft: ballValue === BALL_VALUES.RED ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
+    });
     onAction();
   }, [ballValue, currGameInfo, lpData, onAction, rpData]);
 

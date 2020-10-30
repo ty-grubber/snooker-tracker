@@ -36,8 +36,7 @@ export const matchStats = makeVar({
 export const gameInfo = makeVar({
   leftPlayerActive: true,
   redsLeft: 15,
-  pointsLeft: 147,
-  pointsUntilSnookers: 0,
+  pointsLeft: 147, // Points left until snookers is based off this value: ceil(1/2) + opposing player's score
 })
 
 export const statsCache = new InMemoryCache({
