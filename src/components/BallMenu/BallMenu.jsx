@@ -190,19 +190,38 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
 
   const onSafety = useCallback(() => {
     console.log(`Successful safety on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
+    if (currGameInfo.leftPlayerActive) {
+      leftPlayerStats({
+        ...lpData,
+        safeties: lpData.safeties + 1,
+      });
+    } else {
+      rightPlayerStats({
+        ...rpData,
+        safeties: rpData.safeties + 1,
+      })
+    }
     switchPlayer();
     onAction();
-  }, [ballValue, onAction, switchPlayer]);
+  }, [ballValue, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
 
   const onFoul = useCallback(() => {
     const foulValue = Math.max(4, ballValue);
     console.log(`Foul on ${VALUE_TO_DISPLAY_COLOR[ballValue]} ball. ${foulValue} points awarded to opponent.`);
     if (currGameInfo.leftPlayerActive) {
+      leftPlayerStats({
+        ...lpData,
+        fouls: lpData.fouls + 1,
+      })
       rightPlayerStats({
         ...rpData,
         score: rpData.score + foulValue,
       });
     } else {
+      rightPlayerStats({
+        ...rpData,
+        fouls: rpData.fouls + 1,
+      })
       leftPlayerStats({
         ...lpData,
         score: lpData.score + foulValue,

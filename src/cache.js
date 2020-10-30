@@ -8,7 +8,13 @@ export const leftPlayerStats = makeVar({
     potted: 0,
     longAttempted: 0,
     longPotted: 0
-  }
+  },
+  break: {
+    current: 0,
+    longest: 0,
+  },
+  safeties: 0,
+  fouls: 0,
 });
 export const rightPlayerStats = makeVar({
   name: 'George',
@@ -18,6 +24,10 @@ export const rightPlayerStats = makeVar({
     potted: 0,
     longAttempted: 0,
     longPotted: 0
+  },
+  break: {
+    current: 0,
+    longest: 0,
   }
 });
 export const matchStats = makeVar({
@@ -26,6 +36,8 @@ export const matchStats = makeVar({
 export const gameInfo = makeVar({
   leftPlayerActive: true,
   redsLeft: 15,
+  pointsLeft: 147,
+  pointsUntilSnookers: 0,
 })
 
 export const statsCache = new InMemoryCache({
