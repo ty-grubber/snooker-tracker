@@ -2,9 +2,10 @@
 import { useReactiveVar } from '@apollo/client';
 import { css, jsx } from '@emotion/core';
 import PropTypes from 'prop-types';
+import { useMemo } from 'react';
 import { useCallback } from 'react';
 import { gameInfo, leftPlayerStats, rightPlayerStats } from '../../cache';
-import { BALL_VALUES, VALUE_TO_DISPLAY_COLOR } from '../../constants/ballValues';
+import { BALL_TYPES, BALL_VALUES, VALUE_TO_DISPLAY_COLOR } from '../../constants/ball';
 import { sizing } from '../../constants/styles';
 
 export default function BallMenu({ ballValue, className, isOpen, onAction, openDirection }) {
@@ -63,10 +64,24 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
   const rpData = useReactiveVar(rightPlayerStats);
   const currGameInfo = useReactiveVar(gameInfo);
 
-  const switchPlayer = useCallback(() => {
+  const isValidBallType = useMemo(() => {
+    if (ballValue === BALL_VALUES.RED && currGameInfo.validBallType === BALL_TYPES.RED) {
+      return true;
+    }
+
+    if (ballValue !== BALL_VALUES.RED && currGameInfo.validBallType === BALL_TYPES.COLOR) {
+      return true;
+    }
+
+    return false;
+  }, [ballValue, currGameInfo.validBallType])
+
+  const switchPlayer = useCallback((newPointsLeft = currGameInfo.pointsLeft) => {
     gameInfo({
       ...currGameInfo,
       leftPlayerActive: !currGameInfo.leftPlayerActive,
+      pointsLeft: newPointsLeft,
+      validBallType: BALL_TYPES.RED,
     });
   }, [currGameInfo]);
 
@@ -79,6 +94,10 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
           ...lpData.shots,
           attempted: lpData.shots.attempted + 1,
         },
+        break: {
+          ...lpData.break,
+          current: 0,
+        }
       });
     } else {
       rightPlayerStats({
@@ -87,11 +106,18 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
           ...rpData.shots,
           attempted: rpData.shots.attempted + 1,
         },
+        break: {
+          ...rpData.break,
+          current: 0,
+        }
       });
     }
-    switchPlayer();
+
+    const newPointsLeft = currGameInfo.pointsLeft - (ballValue === BALL_VALUES.RED ? 0 : BALL_VALUES.BLACK);
+
+    switchPlayer(newPointsLeft);
     onAction();
-  }, [ballValue, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
+  }, [ballValue, currGameInfo, lpData, onAction, rpData, switchPlayer]);
 
   const onLongMiss = useCallback(() => {
     console.log(`Missed long shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
@@ -103,6 +129,10 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
           attempted: lpData.shots.attempted + 1,
           longAttempted: lpData.shots.longAttempted + 1,
         },
+        break: {
+          ...lpData.break,
+          current: 0,
+        }
       });
     } else {
       rightPlayerStats({
@@ -112,14 +142,22 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
           attempted: rpData.shots.attempted + 1,
           longAttempted: rpData.shots.longAttempted + 1,
         },
+        break: {
+          ...rpData.break,
+          current: 0,
+        }
       });
     }
-    switchPlayer();
+
+    const newPointsLeft = currGameInfo.pointsLeft - (ballValue === BALL_VALUES.RED ? 0 : BALL_VALUES.BLACK);
+
+    switchPlayer(newPointsLeft);
     onAction();
-  }, [ballValue, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
+  }, [ballValue, currGameInfo, lpData, onAction, rpData, switchPlayer]);
 
   const onPot = useCallback(() => {
-    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}.`);
+    const wasRedPotted = ballValue === BALL_VALUES.RED;
+    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${wasRedPotted ? 'point' : 'points'}.`);
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
@@ -128,6 +166,10 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
           ...lpData.shots,
           attempted: lpData.shots.attempted + 1,
           potted: lpData.shots.potted + 1,
+        },
+        break: {
+          current: lpData.break.current + ballValue,
+          longest: Math.max(lpData.break.current + ballValue, lpData.break.longest),
         },
       });
     } else {
@@ -139,30 +181,38 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
           attempted: rpData.shots.attempted + 1,
           potted: rpData.shots.potted + 1,
         },
+        break: {
+          current: rpData.break.current + ballValue,
+          longest: Math.max(rpData.break.current + ballValue, rpData.break.longest),
+        },
       });
     }
 
-    if (ballValue === BALL_VALUES.RED) {
-      gameInfo({
-        ...currGameInfo,
-        redsLeft: currGameInfo.redsLeft - 1,
-      })
-    }
+    gameInfo({
+      ...currGameInfo,
+      redsLeft: wasRedPotted ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
+      pointsLeft: wasRedPotted ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
+      validBallType: wasRedPotted ? BALL_TYPES.COLOR : BALL_TYPES.RED,
+    });
     onAction();
   }, [ballValue, currGameInfo, lpData, onAction, rpData]);
 
   const onLongPot = useCallback(() => {
-    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]} with long shot. ${ballValue} ${ballValue === 1 ? 'point' : 'points'}.`);
+    const wasRedPotted = ballValue === BALL_VALUES.RED;
+    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]} with long shot. ${ballValue} ${wasRedPotted ? 'point' : 'points'}.`);
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
         score: lpData.score + ballValue,
         shots: {
-          ...lpData.shots,
           attempted: lpData.shots.attempted + 1,
           potted: lpData.shots.potted + 1,
           longAttempted: lpData.shots.longAttempted + 1,
           longPotted: lpData.shots.longPotted + 1,
+        },
+        break: {
+          current: lpData.break.current + ballValue,
+          longest: Math.max(lpData.break.current + ballValue, lpData.break.longest),
         },
       });
     } else {
@@ -170,39 +220,61 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
         ...rpData,
         score: rpData.score + ballValue,
         shots: {
-          ...rpData.shots,
           attempted: rpData.shots.attempted + 1,
           potted: rpData.shots.potted + 1,
           longAttempted: lpData.shots.longAttempted + 1,
           longPotted: lpData.shots.longPotted + 1,
         },
+        break: {
+          current: rpData.break.current + ballValue,
+          longest: Math.max(rpData.break.current + ballValue, rpData.break.longest),
+        },
       });
     }
 
-    if (ballValue === BALL_VALUES.RED) {
-      gameInfo({
-        ...currGameInfo,
-        redsLeft: currGameInfo.redsLeft - 1,
-      })
-    }
+    gameInfo({
+      ...currGameInfo,
+      redsLeft: wasRedPotted ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
+      pointsLeft: wasRedPotted ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
+      validBallType: wasRedPotted ? BALL_TYPES.COLOR : BALL_TYPES.RED,
+    });
     onAction();
   }, [ballValue, currGameInfo, lpData, onAction, rpData]);
 
   const onSafety = useCallback(() => {
     console.log(`Successful safety on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
+    if (currGameInfo.leftPlayerActive) {
+      leftPlayerStats({
+        ...lpData,
+        safeties: lpData.safeties + 1,
+      });
+    } else {
+      rightPlayerStats({
+        ...rpData,
+        safeties: rpData.safeties + 1,
+      })
+    }
     switchPlayer();
     onAction();
-  }, [ballValue, onAction, switchPlayer]);
+  }, [ballValue, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
 
   const onFoul = useCallback(() => {
     const foulValue = Math.max(4, ballValue);
     console.log(`Foul on ${VALUE_TO_DISPLAY_COLOR[ballValue]} ball. ${foulValue} points awarded to opponent.`);
     if (currGameInfo.leftPlayerActive) {
+      leftPlayerStats({
+        ...lpData,
+        fouls: lpData.fouls + 1,
+      })
       rightPlayerStats({
         ...rpData,
         score: rpData.score + foulValue,
       });
     } else {
+      rightPlayerStats({
+        ...rpData,
+        fouls: rpData.fouls + 1,
+      })
       leftPlayerStats({
         ...lpData,
         score: lpData.score + foulValue,
@@ -216,7 +288,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     return null;
   }
 
-  const shotResults = [
+  const validBallShotResults = [
     {
       name: 'Miss',
       onClick: onMiss,
@@ -236,12 +308,17 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     {
       name: 'Safety',
       onClick: onSafety,
-    },
+    }
+  ];
+
+  const foulShotResult = [
     {
       name: 'Foul',
       onClick: onFoul,
     }
   ];
+
+  const shotResults = isValidBallType ? validBallShotResults.concat(foulShotResult) : foulShotResult;
 
   return (
     <ul className={className} css={menuStyles}>
