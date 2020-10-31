@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React from 'react';
-import { BALL_VALUES } from '../../constants/ballValues';
+import { BALL_VALUES } from '../../constants/ball';
 import { sizing } from '../../constants/styles';
 import Ball from '../Ball';
 import RedRack from '../RedRack';

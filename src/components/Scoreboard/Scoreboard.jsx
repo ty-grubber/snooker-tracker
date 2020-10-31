@@ -4,7 +4,7 @@ import { css, jsx } from '@emotion/core';
 import { useEffect } from 'react';
 import { useCallback } from 'react';
 import { leftPlayerStats, rightPlayerStats, matchStats, gameInfo } from '../../cache';
-import { BALL_TYPES } from '../../constants/ballValues';
+import { BALL_TYPES } from '../../constants/ball';
 
 export default function Scoreboard() {
   const lpData = useReactiveVar(leftPlayerStats);

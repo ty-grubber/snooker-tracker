@@ -1,5 +1,5 @@
 import { InMemoryCache, makeVar } from "@apollo/client";
-import { BALL_TYPES } from "./constants/ballValues";
+import { BALL_TYPES } from "./constants/ball";
 
 export const leftPlayerStats = makeVar({
   name: 'Tyler',
