@@ -4,8 +4,14 @@ import { css, jsx } from '@emotion/core';
 import { useEffect } from 'react';
 import { useCallback } from 'react';
 import { leftPlayerStats, rightPlayerStats, matchStats, gameInfo } from '../../cache';
+import { BALL_TYPES } from '../../constants/ballValues';
 
 export default function Scoreboard() {
+  const lpData = useReactiveVar(leftPlayerStats);
+  const rpData = useReactiveVar(rightPlayerStats);
+  const matchData = useReactiveVar(matchStats);
+  const currGameInfo = useReactiveVar(gameInfo);
+
   const scoreboardStyles = css`
     align-content: center;
     border: 2px solid black;
@@ -42,7 +48,10 @@ export default function Scoreboard() {
   `
 
   const activePlayerStyles = css`
-    border-bottom: 3px solid brown;
+    background: ${currGameInfo.validBallType === BALL_TYPES.RED
+      ? 'rgba(195, 3, 23, 1)'
+      : 'linear-gradient(90deg, rgba(249,225,55,1) 0%, rgba(4,84,29,1) 20%, rgba(98,64,36,1) 40%, rgba(6,50,208,1) 60%, rgba(251,98,132,1) 80%, rgba(0,0,0,1) 100%)'
+    };
   `
 
   const playerScoreStyles = css`
@@ -54,11 +63,6 @@ export default function Scoreboard() {
     border-left: 2px solid black;
     border-right: 2px solid black;
   `
-
-  const lpData = useReactiveVar(leftPlayerStats);
-  const rpData = useReactiveVar(rightPlayerStats);
-  const matchData = useReactiveVar(matchStats);
-  const currGameInfo = useReactiveVar(gameInfo);
 
   const leftPlayerNameStyles = [playerNameStyles];
   const rightPlayerNameStyles = [playerNameStyles];
@@ -96,10 +100,7 @@ export default function Scoreboard() {
     <div css={scoreboardStyles}>
       <div css={playerSectionStyles}>
         <div css={leftPlayerNameStyles} onClick={onLeftPlayerClick}>
-          <span>
-            {lpData.name}
-            {currGameInfo.leftPlayerActive && ` - (${currGameInfo.validBallType})`}
-          </span>
+          <span>{lpData.name}</span>
         </div>
         <div css={playerScoreStyles}>
           <span>{lpData.score || 0}</span>
@@ -113,10 +114,7 @@ export default function Scoreboard() {
           <span>{rpData.score || 0}</span>
         </div>
         <div css={rightPlayerNameStyles} onClick={onRightPlayerClick}>
-          <span>
-            {rpData.name}
-            {!currGameInfo.leftPlayerActive && ` - (${currGameInfo.validBallType})`}
-          </span>
+          <span>{rpData.name}</span>
         </div>
       </div>
     </div>
