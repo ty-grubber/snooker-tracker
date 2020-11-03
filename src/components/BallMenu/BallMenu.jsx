@@ -76,17 +76,37 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     return false;
   }, [ballValue, currGameInfo.validBallType])
 
-  const switchPlayer = useCallback((newPointsLeft = currGameInfo.pointsLeft) => {
+  const switchPlayer = useCallback((newPointsLeft = currGameInfo.pointsLeft, logEntry) => {
     gameInfo({
       ...currGameInfo,
       leftPlayerActive: !currGameInfo.leftPlayerActive,
       pointsLeft: newPointsLeft,
       validBallType: BALL_TYPES.RED,
+      log: currGameInfo.log.push(logEntry),
     });
   }, [currGameInfo]);
 
   const onMiss = useCallback(() => {
-    console.log(`Missed shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
+    const logMessage = `Missed shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`
+    console.log(logMessage);
+    const logEntry = {
+      message: logMessage,
+      leftPlayerActive: currGameInfo.leftPlayerActive,
+      statsToUndoTo: {
+        player: {
+          shots: {
+            attempted: currGameInfo.leftPlayerActive ? lpData.shots.attempted : rpData.shots.attempted,
+          },
+          break: currGameInfo.leftPlayerActive ? lpData.break.current : rpData.break.current,
+        },
+        game: {
+          pointsLeft: currGameInfo.pointsLeft,
+          validBallType: currGameInfo.validBallType,
+        }
+      }
+    }
+    const newPointsLeft = currGameInfo.pointsLeft - (ballValue === BALL_VALUES.RED ? 0 : BALL_VALUES.BLACK);
+
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
@@ -113,9 +133,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
       });
     }
 
-    const newPointsLeft = currGameInfo.pointsLeft - (ballValue === BALL_VALUES.RED ? 0 : BALL_VALUES.BLACK);
-
-    switchPlayer(newPointsLeft);
+    switchPlayer(newPointsLeft, logEntry);
     onAction();
   }, [ballValue, currGameInfo, lpData, onAction, rpData, switchPlayer]);
 
