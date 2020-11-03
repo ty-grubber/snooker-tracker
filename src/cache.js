@@ -32,13 +32,14 @@ export const rightPlayerStats = makeVar({
   }
 });
 export const matchStats = makeVar({
-  totalFrames: 9
+  totalFrames: 9,
 });
 export const gameInfo = makeVar({
   leftPlayerActive: true,
   redsLeft: 15,
   pointsLeft: 147, // Points left until snookers is based off this value: ceil(1/2) + opposing player's score
   validBallType: BALL_TYPES.RED,
+  log: [],
 })
 
 export const statsCache = new InMemoryCache({
@@ -61,7 +62,9 @@ export const statsCache = new InMemoryCache({
           }
         },
         gameInfo: {
-          leftPlayerActive: true,
+          read() {
+            return gameInfo();
+          }
         }
       }
     }

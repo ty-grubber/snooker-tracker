@@ -74,19 +74,35 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     }
 
     return false;
-  }, [ballValue, currGameInfo.validBallType])
+  }, [ballValue, currGameInfo.validBallType]);
 
-  const switchPlayer = useCallback((newPointsLeft = currGameInfo.pointsLeft) => {
+  const createLogEntry = useCallback((logMessage) => {
+    return {
+      message: logMessage,
+      statsToUndoTo: {
+        leftPlayer: { ...lpData },
+        rightPlayer: { ...rpData },
+        game: { ...currGameInfo },
+      }
+    }
+  }, [currGameInfo, lpData, rpData]);
+
+  const switchPlayer = useCallback((newPointsLeft = currGameInfo.pointsLeft, logEntry) => {
     gameInfo({
       ...currGameInfo,
       leftPlayerActive: !currGameInfo.leftPlayerActive,
       pointsLeft: newPointsLeft,
       validBallType: BALL_TYPES.RED,
+      log: currGameInfo.log.push(logEntry),
     });
   }, [currGameInfo]);
 
   const onMiss = useCallback(() => {
-    console.log(`Missed shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
+    const logMessage = `Missed shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`
+    console.log(logMessage);
+    const logEntry = createLogEntry(logMessage);
+    const newPointsLeft = currGameInfo.pointsLeft - (ballValue === BALL_VALUES.RED ? 0 : BALL_VALUES.BLACK);
+
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
@@ -113,14 +129,17 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
       });
     }
 
-    const newPointsLeft = currGameInfo.pointsLeft - (ballValue === BALL_VALUES.RED ? 0 : BALL_VALUES.BLACK);
-
-    switchPlayer(newPointsLeft);
+    switchPlayer(newPointsLeft, logEntry);
     onAction();
-  }, [ballValue, currGameInfo, lpData, onAction, rpData, switchPlayer]);
+  }, [ballValue, createLogEntry, currGameInfo.leftPlayerActive, currGameInfo.pointsLeft, lpData, onAction, rpData, switchPlayer]);
 
   const onLongMiss = useCallback(() => {
-    console.log(`Missed long shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
+    const logMessage = `Missed long shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`
+    console.log(logMessage);
+    const logEntry = createLogEntry(logMessage);
+
+    const newPointsLeft = currGameInfo.pointsLeft - (ballValue === BALL_VALUES.RED ? 0 : BALL_VALUES.BLACK);
+
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
@@ -148,16 +167,16 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
         }
       });
     }
-
-    const newPointsLeft = currGameInfo.pointsLeft - (ballValue === BALL_VALUES.RED ? 0 : BALL_VALUES.BLACK);
-
-    switchPlayer(newPointsLeft);
+    switchPlayer(newPointsLeft, logEntry);
     onAction();
-  }, [ballValue, currGameInfo, lpData, onAction, rpData, switchPlayer]);
+  }, [ballValue, createLogEntry, currGameInfo.leftPlayerActive, currGameInfo.pointsLeft, lpData, onAction, rpData, switchPlayer]);
 
   const onPot = useCallback(() => {
     const wasRedPotted = ballValue === BALL_VALUES.RED;
-    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${wasRedPotted ? 'point' : 'points'}.`);
+    const logMessage = `Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${wasRedPotted ? 'point' : 'points'}.`;
+    console.log(logMessage);
+    const logEntry = createLogEntry(logMessage);
+
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
@@ -193,13 +212,17 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
       redsLeft: wasRedPotted ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
       pointsLeft: wasRedPotted ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
       validBallType: wasRedPotted ? BALL_TYPES.COLOR : BALL_TYPES.RED,
+      log: currGameInfo.log.push(logEntry),
     });
     onAction();
-  }, [ballValue, currGameInfo, lpData, onAction, rpData]);
+  }, [ballValue, createLogEntry, currGameInfo, lpData, onAction, rpData]);
 
   const onLongPot = useCallback(() => {
     const wasRedPotted = ballValue === BALL_VALUES.RED;
-    console.log(`Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]} with long shot. ${ballValue} ${wasRedPotted ? 'point' : 'points'}.`);
+    const logMessage = `Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]} with long shot. ${ballValue} ${wasRedPotted ? 'point' : 'points'}.`;
+    console.log(logMessage);
+    const logEntry = createLogEntry(logMessage);
+
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
@@ -237,12 +260,16 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
       redsLeft: wasRedPotted ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
       pointsLeft: wasRedPotted ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
       validBallType: wasRedPotted ? BALL_TYPES.COLOR : BALL_TYPES.RED,
+      log: currGameInfo.log.push(logEntry),
     });
     onAction();
-  }, [ballValue, currGameInfo, lpData, onAction, rpData]);
+  }, [ballValue, createLogEntry, currGameInfo, lpData, onAction, rpData]);
 
   const onSafety = useCallback(() => {
-    console.log(`Successful safety on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`);
+    const logMessage = `Successful safety on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`;
+    console.log(logMessage);
+    const logEntry = createLogEntry(logMessage);
+
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
@@ -254,13 +281,16 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
         safeties: rpData.safeties + 1,
       })
     }
-    switchPlayer();
+    switchPlayer(null, logEntry);
     onAction();
-  }, [ballValue, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
+  }, [ballValue, createLogEntry, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
 
   const onFoul = useCallback(() => {
     const foulValue = Math.max(4, ballValue);
-    console.log(`Foul on ${VALUE_TO_DISPLAY_COLOR[ballValue]} ball. ${foulValue} points awarded to opponent.`);
+    const logMessage = `Foul on ${VALUE_TO_DISPLAY_COLOR[ballValue]} ball. ${foulValue} points awarded to opponent.`;
+    console.log(logMessage);
+    const logEntry = createLogEntry(logMessage);
+
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
@@ -280,9 +310,9 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
         score: lpData.score + foulValue,
       });
     }
-    switchPlayer();
+    switchPlayer(null, logEntry);
     onAction();
-  }, [ballValue, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
+  }, [ballValue, createLogEntry, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
 
   if (!isOpen) {
     return null;
