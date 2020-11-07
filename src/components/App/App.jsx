@@ -17,8 +17,9 @@ export default function App() {
       <Modal
         isShowing={isShowing}
         onHide={toggle}
+        title="Snooker Tracker"
       >
-        <p>Welcome to the Snooker Tracker!</p>
+        <p>Please enter the competitors names:</p>
       </Modal>
     </div>
   );

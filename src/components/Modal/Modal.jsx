@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-export default function Modal({ children, isShowing, onHide }) {
+export default function Modal({ children, isShowing, onHide, title }) {
   const overlayStyles = css`
     background-color: #000;
     height: 100vh;
@@ -38,6 +38,25 @@ export default function Modal({ children, isShowing, onHide }) {
     z-index: 100;
   `
 
+  const modalHeaderStyles = css`
+    display: flex;
+    justify-content: space-between;
+  `
+
+  const textHeaderStyles = css`
+    margin: 0;
+  `
+
+  const closeButtonStyles = css`
+    background: none;
+    border: none;
+    color: #bbb;
+    cursor: pointer;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+  `
+
   if (!isShowing) {
     return null;
   }
@@ -47,8 +66,11 @@ export default function Modal({ children, isShowing, onHide }) {
       <div css={overlayStyles} />
       <div css={wrapperStyles} aria-modal aria-hidden tabIndex={-1} role="dialog">
         <div css={contentStyles}>
-          <div className="modal-header">
-            <button type="button" className="modal-close-button" data-dismiss="modal" aria-label="Close" onClick={onHide}>
+          <div css={modalHeaderStyles}>
+            {!!title && (
+              <h2 css={textHeaderStyles}>{title}</h2>
+            )}
+            <button type="button" css={closeButtonStyles} data-dismiss="modal" aria-label="Close" onClick={onHide}>
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
