@@ -1,9 +1,10 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-export default function Modal({ isShowing, hide }) {
+export default function Modal({ children, isShowing, onHide }) {
   const overlayStyles = css`
     background-color: #000;
     height: 100vh;
@@ -37,23 +38,34 @@ export default function Modal({ isShowing, hide }) {
     z-index: 100;
   `
 
-  if (isShowing) {
-    ReactDOM.createPortal(
-      <React.Fragment>
-        <div css={overlayStyles} />
-        <div css={wrapperStyles} aria-modal aria-hidden tabIndex={-1} role="dialog">
-          <div css={contentStyles}>
-            <div className="modal-header">
-              <button type="button" className="modal-close-button" data-dismiss="modal" aria-label="Close" onClick={hide}>
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <p>
-              Hello, I'm a modal.
-            </p>
-          </div>
-        </div>
-      </React.Fragment>, document.body
-    );
+  if (!isShowing) {
+    return null;
   }
+
+  return ReactDOM.createPortal(
+    <React.Fragment>
+      <div css={overlayStyles} />
+      <div css={wrapperStyles} aria-modal aria-hidden tabIndex={-1} role="dialog">
+        <div css={contentStyles}>
+          <div className="modal-header">
+            <button type="button" className="modal-close-button" data-dismiss="modal" aria-label="Close" onClick={onHide}>
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {children}
+        </div>
+      </div>
+    </React.Fragment>, document.body
+  );
+}
+
+Modal.propTypes = {
+  children: PropTypes.node,
+  isShowing: PropTypes.bool.isRequired,
+  onHide: PropTypes.func,
+}
+
+Modal.defaultProps = {
+  children: undefined,
+  onHide: () => { },
 }
