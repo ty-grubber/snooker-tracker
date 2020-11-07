@@ -1,17 +1,22 @@
 /** @jsx jsx */
 import { useReactiveVar } from '@apollo/client';
-import { jsx } from '@emotion/core';
-import { useCallback } from 'react';
-import { useState } from 'react';
+import { css, jsx } from '@emotion/core';
+import React, { useCallback, useState } from 'react';
 import { leftPlayerStats, matchStats, rightPlayerStats } from '../../cache';
 import useModal from '../../utils/useModal';
 import Modal from '../Modal';
 
 export default function WelcomeModal() {
+  const formErrorStyles = css`
+    color: red;
+    font-size: 0.9rem;
+  `
+
   const { isShowing, toggle } = useModal(true);
-  const [ leftPlayerName, setLeftPlayerName ] = useState();
-  const [ rightPlayerName, setRightPlayerName ] = useState();
-  const [ matchFrames, setMatchFrames ] = useState();
+  const [leftPlayerName, setLeftPlayerName] = useState();
+  const [rightPlayerName, setRightPlayerName] = useState();
+  const [matchFrames, setMatchFrames] = useState();
+  const [formError, setFormError] = useState();
 
   const lpData = useReactiveVar(leftPlayerStats);
   const rpData = useReactiveVar(rightPlayerStats);
@@ -31,22 +36,26 @@ export default function WelcomeModal() {
 
   const handleSubmission = useCallback((e) => {
     e.preventDefault();
-    leftPlayerStats({
-      ...lpData,
-      name: leftPlayerName,
-    });
+    if (matchFrames > 0) {
+      leftPlayerStats({
+        ...lpData,
+        name: leftPlayerName,
+      });
 
-    rightPlayerStats({
-      ...rpData,
-      name: rightPlayerName,
-    });
+      rightPlayerStats({
+        ...rpData,
+        name: rightPlayerName,
+      });
 
-    matchStats({
-      ...matchData,
-      totalFrames: matchFrames,
-    });
+      matchStats({
+        ...matchData,
+        totalFrames: matchFrames,
+      });
 
-    toggle();
+      toggle();
+    }
+
+    setFormError('The number of frames for the match must be greater than 0');
   }, [leftPlayerName, lpData, matchData, matchFrames, rightPlayerName, rpData, toggle]);
 
   return (
@@ -58,13 +67,19 @@ export default function WelcomeModal() {
       <form onSubmit={handleSubmission}>
         <p>Please enter the following information to begin:</p>
         <label for="p1NameInput">Player 1 Name:</label>
-        <input id="p1NameInput" type="text" name="p1NameInput" onChange={handleP1InputChange} />
+        <input id="p1NameInput" type="text" name="p1NameInput" onChange={handleP1InputChange} required />
         <br /><br />
         <label for="p2NameInput">Player 2 Name:</label>
-        <input id="p2NameInput" type="text" name="p2NameInput" onChange={handleP2InputChange} />
+        <input id="p2NameInput" type="text" name="p2NameInput" onChange={handleP2InputChange} required />
         <br /><br />
         <label for="framesInput">Number of Frames:</label>
-        <input id="framesInput" type="number" name="framesInput" onChange={handleFramesChange} />
+        <input id="framesInput" type="number" name="framesInput" onChange={handleFramesChange} required />
+        {!!formError && (
+          <React.Fragment>
+            <br />
+            <span css={formErrorStyles}>{formError}</span>
+          </React.Fragment>
+        )}
         <br /><br />
         <input type="submit" value="Start!" />
       </form>
