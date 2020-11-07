@@ -2,7 +2,7 @@ import { InMemoryCache, makeVar } from "@apollo/client";
 import { BALL_TYPES } from "./constants/ball";
 
 export const leftPlayerStats = makeVar({
-  name: 'Tyler',
+  name: '',
   score: 0,
   shots: {
     attempted: 0,
@@ -18,7 +18,7 @@ export const leftPlayerStats = makeVar({
   fouls: 0,
 });
 export const rightPlayerStats = makeVar({
-  name: 'George',
+  name: '',
   score: 0,
   shots: {
     attempted: 0,
@@ -32,7 +32,7 @@ export const rightPlayerStats = makeVar({
   }
 });
 export const matchStats = makeVar({
-  totalFrames: 9,
+  totalFrames: 0,
 });
 export const gameInfo = makeVar({
   leftPlayerActive: true,

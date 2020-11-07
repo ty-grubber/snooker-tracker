@@ -1,6 +1,7 @@
 import React from 'react';
 import Scoreboard from '../Scoreboard';
 import Table from '../Table';
+import WelcomeModal from '../WelcomeModal';
 import './App.css';
 
 export default function App() {
@@ -10,6 +11,7 @@ export default function App() {
       <br />
       <span>See console for game log.</span>
       <Table />
+      <WelcomeModal />
     </div>
   );
 }
