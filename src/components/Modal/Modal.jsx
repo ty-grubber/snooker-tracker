@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-export default function Modal({ children, isShowing, onHide, title }) {
+export default function Modal({ canClose, children, isShowing, onHide, title }) {
   const overlayStyles = css`
     background-color: #000;
     height: 100vh;
@@ -70,9 +70,11 @@ export default function Modal({ children, isShowing, onHide, title }) {
             {!!title && (
               <h2 css={textHeaderStyles}>{title}</h2>
             )}
-            <button type="button" css={closeButtonStyles} data-dismiss="modal" aria-label="Close" onClick={onHide}>
-              <span aria-hidden="true">&times;</span>
-            </button>
+            {canClose && (
+              <button type="button" css={closeButtonStyles} data-dismiss="modal" aria-label="Close" onClick={onHide}>
+                <span aria-hidden="true">&times;</span>
+              </button>
+            )}
           </div>
           {children}
         </div>
@@ -82,12 +84,14 @@ export default function Modal({ children, isShowing, onHide, title }) {
 }
 
 Modal.propTypes = {
+  canClose: PropTypes.bool,
   children: PropTypes.node,
   isShowing: PropTypes.bool.isRequired,
   onHide: PropTypes.func,
 }
 
 Modal.defaultProps = {
+  canClose: true,
   children: undefined,
-  onHide: () => { },
+  onHide: () => {},
 }
