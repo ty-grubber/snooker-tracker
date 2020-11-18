@@ -4,7 +4,7 @@ import { css, jsx } from '@emotion/core';
 import { useEffect } from 'react';
 import { useCallback } from 'react';
 import { leftPlayerStats, rightPlayerStats, matchStats, gameInfo } from '../../cache';
-import { BALL_TYPES } from '../../constants/ball';
+import { BALL_VALUES } from '../../constants/ball';
 
 export default function Scoreboard() {
   const lpData = useReactiveVar(leftPlayerStats);
@@ -48,7 +48,7 @@ export default function Scoreboard() {
   `
 
   const activePlayerStyles = css`
-    background: ${currGameInfo.validBallType === BALL_TYPES.RED
+    background: ${currGameInfo.validBallType === BALL_VALUES.RED
       ? 'rgba(195, 3, 23, 1)'
       : 'linear-gradient(90deg, rgba(249,225,55,1) 0%, rgba(4,84,29,1) 20%, rgba(98,64,36,1) 40%, rgba(6,50,208,1) 60%, rgba(251,98,132,1) 80%, rgba(0,0,0,1) 100%)'
     };
@@ -95,6 +95,13 @@ export default function Scoreboard() {
   useEffect(() => {
     console.log(`${currGameInfo.pointsLeft} points left on table.`)
   }, [currGameInfo.pointsLeft]);
+
+  useEffect(() => {
+    if (currGameInfo.validBallType === BALL_VALUES.CUE) {
+      console.log('Game has finished.');
+      // TODO: final tally of scores, declare winner, trigger modal to start next frame or abandon match
+    }
+  }, [currGameInfo.validBallType]);
 
   return (
     <div css={scoreboardStyles}>

@@ -1,4 +1,5 @@
 export const BALL_VALUES = {
+  CUE: 0,
   RED: 1,
   YELLOW: 2,
   GREEN: 3,
@@ -6,6 +7,7 @@ export const BALL_VALUES = {
   BLUE: 5,
   PINK: 6,
   BLACK: 7,
+  ANY_COLOR: 8,
 }
 
 export const VALUE_TO_DISPLAY_COLOR = {
@@ -16,10 +18,4 @@ export const VALUE_TO_DISPLAY_COLOR = {
   5: 'Blue',
   6: 'Pink',
   7: 'Black',
-}
-
-export const BALL_TYPES = {
-  COLOR: 'Color',
-  CUE: 'Cue',
-  RED: 'Red',
 }

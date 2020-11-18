@@ -1,5 +1,5 @@
 import { InMemoryCache, makeVar } from "@apollo/client";
-import { BALL_TYPES } from "./constants/ball";
+import { BALL_VALUES } from "./constants/ball";
 
 export const leftPlayerStats = makeVar({
   name: '',
@@ -40,7 +40,7 @@ export const gameInfo = makeVar({
   leftPlayerActive: true,
   redsLeft: 15,
   pointsLeft: 147, // Points left until snookers is based off this value: ceil(1/2) + opposing player's score
-  validBallType: BALL_TYPES.RED,
+  validBallType: BALL_VALUES.RED,
   reRacks: 0,
   log: [],
 })
