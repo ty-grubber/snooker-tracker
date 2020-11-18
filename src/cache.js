@@ -33,12 +33,15 @@ export const rightPlayerStats = makeVar({
 });
 export const matchStats = makeVar({
   totalFrames: 0,
+  gameResults: [],
 });
 export const gameInfo = makeVar({
+  leftPlayerStarted: false,
   leftPlayerActive: true,
   redsLeft: 15,
   pointsLeft: 147, // Points left until snookers is based off this value: ceil(1/2) + opposing player's score
   validBallType: BALL_TYPES.RED,
+  reRacks: 0,
   log: [],
 })
 
