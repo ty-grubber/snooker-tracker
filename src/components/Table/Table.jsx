@@ -1,5 +1,8 @@
+import { useReactiveVar } from '@apollo/client';
 import styled from '@emotion/styled';
-import React from 'react';
+import React, { useState } from 'react';
+import { useEffect } from 'react';
+import { gameInfo } from '../../cache';
 import { BALL_VALUES } from '../../constants/ball';
 import { sizing } from '../../constants/styles';
 import Ball from '../Ball';
@@ -66,6 +69,16 @@ export default function Table() {
       color: #fff;
     }
   `
+
+  const [maxBallValueLeft, setMaxBallValueLeft] = useState(BALL_VALUES.RED);
+  const currGameInfo = useReactiveVar(gameInfo);
+
+  useEffect(() => {
+    if (currGameInfo.redsLeft === 0 && currGameInfo.validBallType !== BALL_VALUES.CUE) {
+      setMaxBallValueLeft(currGameInfo.validBallType);
+    }
+  }, [currGameInfo.redsLeft, currGameInfo.validBallType]);
+
   return (
     <div className="Table-outside">
       <div className="Table-inside">
@@ -73,13 +86,27 @@ export default function Table() {
         <div className="Table-baulk circleBottom" />
         <div className="Table-baulk line" />
         <div className="Table-balls">
-          <GreenBall menuOpenDirection="right" value={BALL_VALUES.GREEN} />
-          <BrownBall menuOpenDirection="left" value={BALL_VALUES.BROWN} />
-          <YellowBall menuOpenDirection="right" value={BALL_VALUES.YELLOW} />
-          <BlueBall value={BALL_VALUES.BLUE} />
-          <PinkBall value={BALL_VALUES.PINK} menuOpenDirection="left" />
-          <RedRack />
-          <BlackBall value={BALL_VALUES.BLACK} />
+          {maxBallValueLeft <= BALL_VALUES.GREEN && (
+            <GreenBall menuOpenDirection="right" value={BALL_VALUES.GREEN} />
+          )}
+          {maxBallValueLeft <= BALL_VALUES.BROWN && (
+            <BrownBall menuOpenDirection="left" value={BALL_VALUES.BROWN} />
+          )}
+          {maxBallValueLeft <= BALL_VALUES.YELLOW && (
+            <YellowBall menuOpenDirection="right" value={BALL_VALUES.YELLOW} />
+          )}
+          {maxBallValueLeft <= BALL_VALUES.BLUE && (
+            <BlueBall value={BALL_VALUES.BLUE} />
+          )}
+          {maxBallValueLeft <= BALL_VALUES.PINK && (
+            <PinkBall value={BALL_VALUES.PINK} menuOpenDirection="left" />
+          )}
+          {maxBallValueLeft <= BALL_VALUES.RED && (
+            <RedRack />
+          )}
+          {maxBallValueLeft <= BALL_VALUES.BLACK && (
+            <BlackBall value={BALL_VALUES.BLACK} />
+          )}
         </div>
       </div>
       <div id="left-top" className="Table-pocket" />
