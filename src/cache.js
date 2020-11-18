@@ -29,7 +29,9 @@ export const rightPlayerStats = makeVar({
   break: {
     current: 0,
     longest: 0,
-  }
+  },
+  safeties: 0,
+  fouls: 0,
 });
 export const matchStats = makeVar({
   totalFrames: 0,

@@ -92,7 +92,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
       ...currGameInfo,
       leftPlayerActive: !currGameInfo.leftPlayerActive,
       pointsLeft: newPointsLeft,
-      validBallType: BALL_VALUES.RED,
+      validBallType: currGameInfo.redsLeft > 0 ? BALL_VALUES.RED : currGameInfo.validBallType,
       log: currGameInfo.log.push(logEntry),
     });
   }, [currGameInfo]);
