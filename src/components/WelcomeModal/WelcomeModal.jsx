@@ -98,7 +98,7 @@ export default function WelcomeModal() {
         ...currGameInfo,
         leftPlayerStarted: startingPlayer === 'p1',
         leftPlayerActive: startingPlayer === 'p1',
-      })
+      });
 
       matchStats({
         ...matchData,

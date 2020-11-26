@@ -1,12 +1,13 @@
 /** @jsx jsx */
 import { useReactiveVar } from '@apollo/client';
 import { css, jsx } from '@emotion/core';
+import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useCallback } from 'react';
 import { leftPlayerStats, rightPlayerStats, matchStats, gameInfo } from '../../cache';
 import { BALL_VALUES } from '../../constants/ball';
 
-export default function Scoreboard() {
+export default function Scoreboard({ onGameFinish }) {
   const lpData = useReactiveVar(leftPlayerStats);
   const rpData = useReactiveVar(rightPlayerStats);
   const matchData = useReactiveVar(matchStats);
@@ -96,12 +97,30 @@ export default function Scoreboard() {
     console.log(`${currGameInfo.pointsLeft} points left on table.`)
   }, [currGameInfo.pointsLeft]);
 
+  const logGameData = useCallback(() => {
+    const lpWon = lpData.score > rpData.score;
+    matchStats({
+      ...matchData,
+      leftPlayerFramesWon: matchData.leftPlayerFramesWon + (lpWon ? 1 : 0),
+      rightPlayerFramesWon: matchData.rightPlayerFramesWon + (!lpWon ? 1 : 0),
+      gameResults: matchData.gameResults.push({
+        leftPlayerStarted: currGameInfo.leftPlayerStarted,
+        lpScore: lpData.score,
+        rpScore: rpData.score,
+        winnerBreak: lpWon ? lpData.break.longest : rpData.break.longest,
+        reRacks: currGameInfo.reRacks,
+      }),
+    });
+  }, [currGameInfo.leftPlayerStarted, currGameInfo.reRacks, lpData.break.longest, lpData.score, matchData, rpData.break.longest, rpData.score]);
+
   useEffect(() => {
     if (currGameInfo.validBallType === BALL_VALUES.CUE) {
       console.log('Game has finished.');
       // TODO: final tally of scores, declare winner, trigger modal to start next frame or abandon match
+      logGameData();
+      onGameFinish();
     }
-  }, [currGameInfo.validBallType]);
+  }, [currGameInfo.validBallType, logGameData, onGameFinish]);
 
   return (
     <div css={scoreboardStyles}>
@@ -114,7 +133,7 @@ export default function Scoreboard() {
         </div>
       </div>
       <div css={matchSectionStyles}>
-        <span>{`0 - (${matchData.totalFrames || 9}) - 0`}</span>
+        <span>{`${matchData.leftPlayerFramesWon} - (${matchData.totalFrames}) - ${matchData.rightPlayerFramesWon}`}</span>
       </div>
       <div css={playerSectionStyles}>
         <div css={playerScoreStyles}>
@@ -127,3 +146,11 @@ export default function Scoreboard() {
     </div>
   )
 }
+
+Scoreboard.propTypes = {
+  onGameFinish: PropTypes.func,
+};
+
+Scoreboard.defaultProps = {
+  onGameFinish: () => { },
+};

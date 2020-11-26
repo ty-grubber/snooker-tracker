@@ -35,6 +35,8 @@ export const rightPlayerStats = makeVar({
 });
 export const matchStats = makeVar({
   totalFrames: 0,
+  leftPlayerFramesWon: 0,
+  rightPlayerFramesWon: 0,
   gameResults: [],
 });
 export const gameInfo = makeVar({
@@ -45,7 +47,7 @@ export const gameInfo = makeVar({
   validBallType: BALL_VALUES.RED,
   reRacks: 0,
   log: [],
-})
+});
 
 export const statsCache = new InMemoryCache({
   typePolicies: {
@@ -74,4 +76,4 @@ export const statsCache = new InMemoryCache({
       }
     }
   }
-})
+});
