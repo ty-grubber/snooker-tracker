@@ -20,6 +20,7 @@ export default function Scoreboard({ onGameFinish }) {
     justify-content: center;
     height: 5vh;
     margin: auto;
+    max-width: 1000px;
     width: 75%;
 
     & > div {
