@@ -87,13 +87,15 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     }
   }, [currGameInfo, lpData, rpData]);
 
-  const switchPlayer = useCallback((newPointsLeft = currGameInfo.pointsLeft, logEntry) => {
+  const switchPlayer = useCallback((logEntry) => {
+    const { pointsLeft: newPointsLeft, validBallType: currValidBall } = currGameInfo;
+
     gameInfo({
       ...currGameInfo,
       leftPlayerActive: !currGameInfo.leftPlayerActive,
-      pointsLeft: newPointsLeft,
+      pointsLeft: newPointsLeft - (currValidBall === BALL_VALUES.ANY_COLOR ? 7 : 0),
       validBallType: currGameInfo.redsLeft > 0 ? BALL_VALUES.RED : currGameInfo.validBallType,
-      log: currGameInfo.log.push(logEntry),
+      log: currGameInfo.log.concat([logEntry]),
     });
   }, [currGameInfo]);
 
@@ -101,7 +103,6 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     const logMessage = `Missed shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`
     console.log(logMessage);
     const logEntry = createLogEntry(logMessage);
-    const newPointsLeft = currGameInfo.pointsLeft - (ballValue === BALL_VALUES.RED ? 0 : BALL_VALUES.BLACK);
 
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
@@ -129,16 +130,14 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
       });
     }
 
-    switchPlayer(newPointsLeft, logEntry);
+    switchPlayer(logEntry);
     onAction();
-  }, [ballValue, createLogEntry, currGameInfo.leftPlayerActive, currGameInfo.pointsLeft, lpData, onAction, rpData, switchPlayer]);
+  }, [ballValue, createLogEntry, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
 
   const onLongMiss = useCallback(() => {
     const logMessage = `Missed long shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`
     console.log(logMessage);
     const logEntry = createLogEntry(logMessage);
-
-    const newPointsLeft = currGameInfo.pointsLeft - (ballValue === BALL_VALUES.RED ? 0 : BALL_VALUES.BLACK);
 
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
@@ -167,9 +166,9 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
         }
       });
     }
-    switchPlayer(newPointsLeft, logEntry);
+    switchPlayer(logEntry);
     onAction();
-  }, [ballValue, createLogEntry, currGameInfo.leftPlayerActive, currGameInfo.pointsLeft, lpData, onAction, rpData, switchPlayer]);
+  }, [ballValue, createLogEntry, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
 
   const onPot = useCallback(() => {
     const wasRedPotted = ballValue === BALL_VALUES.RED;
@@ -222,7 +221,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
       redsLeft: wasRedPotted ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
       pointsLeft: wasRedPotted ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
       validBallType: nextTargetBall,
-      log: currGameInfo.log.push(logEntry),
+      log: currGameInfo.log.concat([logEntry]),
     });
     onAction();
   }, [ballValue, createLogEntry, currGameInfo, lpData, onAction, rpData]);
@@ -280,7 +279,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
       redsLeft: wasRedPotted ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
       pointsLeft: wasRedPotted ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
       validBallType: nextTargetBall,
-      log: currGameInfo.log.push(logEntry),
+      log: currGameInfo.log.concat([logEntry]),
     });
     onAction();
   }, [ballValue, createLogEntry, currGameInfo, lpData, onAction, rpData]);
@@ -301,7 +300,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
         safeties: rpData.safeties + 1,
       })
     }
-    switchPlayer(null, logEntry);
+    switchPlayer(logEntry);
     onAction();
   }, [ballValue, createLogEntry, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
 
@@ -330,7 +329,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
         score: lpData.score + foulValue,
       });
     }
-    switchPlayer(null, logEntry);
+    switchPlayer(logEntry);
     onAction();
   }, [ballValue, createLogEntry, currGameInfo.leftPlayerActive, lpData, onAction, rpData, switchPlayer]);
 
