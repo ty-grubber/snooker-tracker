@@ -90,11 +90,17 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
   const switchPlayer = useCallback((logEntry) => {
     const { pointsLeft: newPointsLeft, validBallType: currValidBall } = currGameInfo;
 
+    let nextValidBall = BALL_VALUES.RED;
+
+    if (currGameInfo.redsLeft === 0) {
+      nextValidBall = currValidBall === BALL_VALUES.ANY_COLOR ? BALL_VALUES.YELLOW : currValidBall;
+    }
+
     gameInfo({
       ...currGameInfo,
       leftPlayerActive: !currGameInfo.leftPlayerActive,
       pointsLeft: newPointsLeft - (currValidBall === BALL_VALUES.ANY_COLOR ? 7 : 0),
-      validBallType: currGameInfo.redsLeft > 0 ? BALL_VALUES.RED : currGameInfo.validBallType,
+      validBallType: nextValidBall,
       log: currGameInfo.log.concat([logEntry]),
     });
   }, [currGameInfo]);
@@ -207,19 +213,19 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     }
 
     let nextTargetBall = wasRedPotted ? BALL_VALUES.ANY_COLOR : BALL_VALUES.RED;
-    // If there are about to be or there are no reds left, then we need to set the next appropriate color as the target ball
-    if ((wasRedPotted && currGameInfo.redsLeft === 1) || (!wasRedPotted && currGameInfo.redsLeft === 0)) {
-      nextTargetBall = wasRedPotted ? BALL_VALUES.YELLOW : currGameInfo.validBallType + 1;
+    // If there are no reds left, then we need to set the next appropriate color as the target ball
+    if (!wasRedPotted && currGameInfo.redsLeft === 0) {
+      nextTargetBall = currGameInfo.validBallType === BALL_VALUES.ANY_COLOR ? BALL_VALUES.YELLOW : currGameInfo.validBallType + 1;
     }
 
-    if (ballValue === BALL_VALUES.BLACK && currGameInfo.redsLeft === 0) {
+    if (currGameInfo.validBallType === BALL_VALUES.BLACK && currGameInfo.redsLeft === 0) {
       nextTargetBall = BALL_VALUES.CUE;
     }
 
     gameInfo({
       ...currGameInfo,
       redsLeft: wasRedPotted ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
-      pointsLeft: wasRedPotted ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
+      pointsLeft: currGameInfo.pointsLeft - Math.min(currGameInfo.validBallType, BALL_VALUES.BLACK),
       validBallType: nextTargetBall,
       log: currGameInfo.log.concat([logEntry]),
     });
@@ -265,19 +271,19 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     }
 
     let nextTargetBall = wasRedPotted ? BALL_VALUES.ANY_COLOR : BALL_VALUES.RED;
-    // If there are about to be or there are no reds left, then we need to set the next appropriate color as the target ball
-    if ((wasRedPotted && currGameInfo.redsLeft === 1) || (!wasRedPotted && currGameInfo.redsLeft === 0)) {
-      nextTargetBall = currGameInfo.validBallType + 1;
+    // If there are no reds left, then we need to set the next appropriate color as the target ball
+    if (!wasRedPotted && currGameInfo.redsLeft === 0) {
+      nextTargetBall = currGameInfo.validBallType === BALL_VALUES.ANY_COLOR ? BALL_VALUES.YELLOW : currGameInfo.validBallType + 1;
     }
 
-    if (ballValue === BALL_VALUES.BLACK && currGameInfo.redsLeft === 0) {
+    if (currGameInfo.validBallType === BALL_VALUES.BLACK && currGameInfo.redsLeft === 0) {
       nextTargetBall = BALL_VALUES.CUE;
     }
 
     gameInfo({
       ...currGameInfo,
       redsLeft: wasRedPotted ? currGameInfo.redsLeft - 1 : currGameInfo.redsLeft,
-      pointsLeft: wasRedPotted ? currGameInfo.pointsLeft - BALL_VALUES.RED : currGameInfo.pointsLeft - BALL_VALUES.BLACK,
+      pointsLeft: currGameInfo.pointsLeft - Math.min(currGameInfo.validBallType, BALL_VALUES.BLACK),
       validBallType: nextTargetBall,
       log: currGameInfo.log.concat([logEntry]),
     });

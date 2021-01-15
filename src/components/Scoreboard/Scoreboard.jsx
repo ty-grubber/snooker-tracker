@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useCallback } from 'react';
 import { leftPlayerStats, rightPlayerStats, matchStats, gameInfo } from '../../cache';
-import { BALL_VALUES } from '../../constants/ball';
+import { BALL_VALUES, VALUE_TO_BACKGROUND_COLOR, VALUE_TO_FONT_COLOR } from '../../constants/ball';
 
 export default function Scoreboard({ onGameFinish }) {
   const lpData = useReactiveVar(leftPlayerStats);
@@ -50,10 +50,8 @@ export default function Scoreboard({ onGameFinish }) {
   `
 
   const activePlayerStyles = css`
-    background: ${currGameInfo.validBallType === BALL_VALUES.RED
-      ? 'rgba(195, 3, 23, 1)'
-      : 'linear-gradient(90deg, rgba(249,225,55,1) 0%, rgba(4,84,29,1) 20%, rgba(98,64,36,1) 40%, rgba(6,50,208,1) 60%, rgba(251,98,132,1) 80%, rgba(0,0,0,1) 100%)'
-    };
+    background: ${VALUE_TO_BACKGROUND_COLOR[currGameInfo.validBallType]};
+    color: ${VALUE_TO_FONT_COLOR[currGameInfo.validBallType]};
   `
 
   const playerScoreStyles = css`
@@ -104,13 +102,13 @@ export default function Scoreboard({ onGameFinish }) {
       ...matchData,
       leftPlayerFramesWon: matchData.leftPlayerFramesWon + (lpWon ? 1 : 0),
       rightPlayerFramesWon: matchData.rightPlayerFramesWon + (!lpWon ? 1 : 0),
-      gameResults: matchData.gameResults.push({
+      gameResults: matchData.gameResults.concat([{
         leftPlayerStarted: currGameInfo.leftPlayerStarted,
         lpScore: lpData.score,
         rpScore: rpData.score,
         winnerBreak: lpWon ? lpData.break.longest : rpData.break.longest,
         reRacks: currGameInfo.reRacks,
-      }),
+      }]),
     });
   }, [currGameInfo.leftPlayerStarted, currGameInfo.reRacks, lpData.break.longest, lpData.score, matchData, rpData.break.longest, rpData.score]);
 

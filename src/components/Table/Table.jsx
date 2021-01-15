@@ -71,13 +71,20 @@ export default function Table() {
   `
 
   const [maxBallValueLeft, setMaxBallValueLeft] = useState(BALL_VALUES.RED);
+  const [colorsStayPotted, setColorsStayPotted] = useState(false);
   const currGameInfo = useReactiveVar(gameInfo);
 
   useEffect(() => {
-    if (currGameInfo.redsLeft === 0 && currGameInfo.validBallType !== BALL_VALUES.CUE) {
+    if (currGameInfo.validBallType === BALL_VALUES.YELLOW) {
+      setColorsStayPotted(true);
+    }
+  }, [currGameInfo.validBallType]);
+
+  useEffect(() => {
+    if (colorsStayPotted && currGameInfo.validBallType !== BALL_VALUES.CUE) {
       setMaxBallValueLeft(currGameInfo.validBallType);
     }
-  }, [currGameInfo.redsLeft, currGameInfo.validBallType]);
+  }, [colorsStayPotted, currGameInfo.validBallType]);
 
   return (
     <div className="Table-outside">
