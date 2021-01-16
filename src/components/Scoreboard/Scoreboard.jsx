@@ -1,13 +1,13 @@
 /** @jsx jsx */
 import { useReactiveVar } from '@apollo/client';
 import { css, jsx } from '@emotion/core';
-import PropTypes from 'prop-types';
-import { useEffect } from 'react';
-import { useCallback } from 'react';
+import styled from '@emotion/styled';
+import React, { useCallback, useEffect, useState } from 'react';
 import { leftPlayerStats, rightPlayerStats, matchStats, gameInfo } from '../../cache';
 import { BALL_VALUES, VALUE_TO_BACKGROUND_COLOR, VALUE_TO_FONT_COLOR } from '../../constants/ball';
+import Modal from '../Modal';
 
-export default function Scoreboard({ onGameFinish }) {
+export default function Scoreboard() {
   const lpData = useReactiveVar(leftPlayerStats);
   const rpData = useReactiveVar(rightPlayerStats);
   const matchData = useReactiveVar(matchStats);
@@ -64,6 +64,17 @@ export default function Scoreboard({ onGameFinish }) {
     border-right: 2px solid black;
   `
 
+  const NextFrameButton = styled.button`
+    background-color: green;
+    border: none;
+    border-radius: 3px;
+    color: white;
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    text-transform: uppercase;
+  `
+
   const leftPlayerNameStyles = [playerNameStyles];
   const rightPlayerNameStyles = [playerNameStyles];
 
@@ -72,6 +83,8 @@ export default function Scoreboard({ onGameFinish }) {
   } else {
     rightPlayerNameStyles.push(activePlayerStyles);
   }
+
+  const [showGameEndModal, setShowGameEndModal] = useState(false);
 
   // TODO: This will eventually change into a dropdown with menu items
   const onPlayerClick = useCallback((playerData) => {
@@ -96,7 +109,7 @@ export default function Scoreboard({ onGameFinish }) {
     console.log(`${currGameInfo.pointsLeft} points left on table.`)
   }, [currGameInfo.pointsLeft]);
 
-  const logGameData = useCallback(() => {
+  const onGameFinish = useCallback(() => {
     const lpWon = lpData.score > rpData.score;
     matchStats({
       ...matchData,
@@ -110,46 +123,86 @@ export default function Scoreboard({ onGameFinish }) {
         reRacks: currGameInfo.reRacks,
       }]),
     });
-  }, [currGameInfo.leftPlayerStarted, currGameInfo.reRacks, lpData.break.longest, lpData.score, matchData, rpData.break.longest, rpData.score]);
+    setShowGameEndModal(false);
+
+    // Reset scores, breaks, and game info with new starting breaker
+    leftPlayerStats({
+      ...lpData,
+      score: 0,
+      break: {
+        current: 0,
+        longest: 0,
+      },
+    });
+    rightPlayerStats({
+      ...rpData,
+      score: 0,
+      break: {
+        current: 0,
+        longest: 0,
+      }
+    });
+    gameInfo({
+      leftPlayerStarted: !currGameInfo.leftPlayerStarted,
+      leftPlayerActive: !currGameInfo.leftPlayerStarted,
+      redsLeft: 15,
+      pointsLeft: 147,
+      validBallType: BALL_VALUES.RED,
+      reRacks: 0,
+      log: [],
+    });
+  }, [currGameInfo, lpData, matchData, rpData]);
 
   useEffect(() => {
     if (currGameInfo.validBallType === BALL_VALUES.CUE) {
       console.log('Game has finished.');
-      // TODO: final tally of scores, declare winner, trigger modal to start next frame or abandon match
-      logGameData();
-      onGameFinish();
+      setShowGameEndModal(true);
     }
-  }, [currGameInfo.validBallType, logGameData, onGameFinish]);
+  }, [currGameInfo.validBallType]);
+
+  const lpWon = lpData.score > rpData.score;
 
   return (
-    <div css={scoreboardStyles}>
-      <div css={playerSectionStyles}>
-        <div css={leftPlayerNameStyles} onClick={onLeftPlayerClick}>
-          <span>{lpData.name}</span>
+    <React.Fragment>
+      <div css={scoreboardStyles}>
+        <div css={playerSectionStyles}>
+          <div css={leftPlayerNameStyles} onClick={onLeftPlayerClick}>
+            <span>{lpData.name}</span>
+          </div>
+          <div css={playerScoreStyles}>
+            <span>{lpData.score || 0}</span>
+          </div>
         </div>
-        <div css={playerScoreStyles}>
-          <span>{lpData.score || 0}</span>
+        <div css={matchSectionStyles}>
+          <span>{`${matchData.leftPlayerFramesWon} - (${matchData.totalFrames}) - ${matchData.rightPlayerFramesWon}`}</span>
+        </div>
+        <div css={playerSectionStyles}>
+          <div css={playerScoreStyles}>
+            <span>{rpData.score || 0}</span>
+          </div>
+          <div css={rightPlayerNameStyles} onClick={onRightPlayerClick}>
+            <span>{rpData.name}</span>
+          </div>
         </div>
       </div>
-      <div css={matchSectionStyles}>
-        <span>{`${matchData.leftPlayerFramesWon} - (${matchData.totalFrames}) - ${matchData.rightPlayerFramesWon}`}</span>
-      </div>
-      <div css={playerSectionStyles}>
-        <div css={playerScoreStyles}>
-          <span>{rpData.score || 0}</span>
-        </div>
-        <div css={rightPlayerNameStyles} onClick={onRightPlayerClick}>
-          <span>{rpData.name}</span>
-        </div>
-      </div>
-    </div>
+      <Modal
+        canClose={false}
+        isShowing={showGameEndModal}
+        title={`Frame ${matchData.gameResults.length + 1} Complete`}
+      >
+        <span>{lpWon ? lpData.name : rpData.name} won</span>
+        <br />
+        <br />
+        <span>{lpWon ? lpData.score : rpData.score} - {lpWon ? rpData.score : lpData.score}</span>
+        <br />
+        <br />
+        <span>Longest break: {lpWon ? lpData.break.longest : rpData.break.longest}</span>
+        <br />
+        <br />
+        <br />
+        <NextFrameButton onClick={onGameFinish}>Start Next Frame</NextFrameButton>
+        {/* <button onClick={onMatchFinish}>Abandon Match</button> */}
+      </Modal>
+    </React.Fragment>
   )
 }
-
-Scoreboard.propTypes = {
-  onGameFinish: PropTypes.func,
-};
-
-Scoreboard.defaultProps = {
-  onGameFinish: () => { },
-};
