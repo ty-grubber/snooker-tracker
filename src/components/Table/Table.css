@@ -12,6 +12,7 @@
   height: 80vh;
   margin: 25px auto;
   max-height: 500px;
+  max-width: 1200px;
   position: relative;
   width: 90%;
   z-index: 1;

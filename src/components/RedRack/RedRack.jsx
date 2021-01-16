@@ -115,7 +115,7 @@ export default function RedRack() {
 
   const container = css`
     height: calc(${sizing.ballDimension} * 5);
-    left: calc(78% - calc(${sizing.ballDiameter} / 2));
+    left: calc(74% - calc(${sizing.ballDiameter} / 2));
     position: absolute;
     top: calc(50% - calc(${sizing.ballDimension} * 2.5));
     width: calc(${sizing.ballDimension} * 5);

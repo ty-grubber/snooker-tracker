@@ -1,5 +1,5 @@
 import { InMemoryCache, makeVar } from "@apollo/client";
-import { BALL_TYPES } from "./constants/ball";
+import { BALL_VALUES } from "./constants/ball";
 
 export const leftPlayerStats = makeVar({
   name: '',
@@ -29,18 +29,25 @@ export const rightPlayerStats = makeVar({
   break: {
     current: 0,
     longest: 0,
-  }
+  },
+  safeties: 0,
+  fouls: 0,
 });
 export const matchStats = makeVar({
   totalFrames: 0,
+  leftPlayerFramesWon: 0,
+  rightPlayerFramesWon: 0,
+  gameResults: [],
 });
 export const gameInfo = makeVar({
+  leftPlayerStarted: false,
   leftPlayerActive: true,
   redsLeft: 15,
   pointsLeft: 147, // Points left until snookers is based off this value: ceil(1/2) + opposing player's score
-  validBallType: BALL_TYPES.RED,
+  validBallType: BALL_VALUES.RED,
+  reRacks: 0,
   log: [],
-})
+});
 
 export const statsCache = new InMemoryCache({
   typePolicies: {
@@ -69,4 +76,4 @@ export const statsCache = new InMemoryCache({
       }
     }
   }
-})
+});
