@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { leftPlayerStats, rightPlayerStats, matchStats, gameInfo } from '../../cache';
 import { BALL_VALUES, VALUE_TO_BACKGROUND_COLOR, VALUE_TO_FONT_COLOR } from '../../constants/ball';
 import Modal from '../Modal';
+import StatPopdown from '../StatPopdown';
 
 export default function Scoreboard() {
   const lpData = useReactiveVar(leftPlayerStats);
@@ -15,10 +16,8 @@ export default function Scoreboard() {
 
   const scoreboardStyles = css`
     align-content: center;
-    border: 2px solid black;
     display: flex;
     justify-content: center;
-    height: 5vh;
     margin: auto;
     max-width: 1000px;
     width: 75%;
@@ -33,11 +32,15 @@ export default function Scoreboard() {
   `
 
   const playerSectionStyles = css`
+    border: 2px solid black;
+    border-top: 0 none;
     display: flex;
     flex-basis: 40%;
+    flex-wrap: wrap;
 
     & > div {
       flex-grow: 1;
+      max-height: 5vh;
     }
   `
 
@@ -60,8 +63,7 @@ export default function Scoreboard() {
   `
 
   const matchSectionStyles = css`
-    border-left: 2px solid black;
-    border-right: 2px solid black;
+    background-color: #eee;
   `
 
   const NextFrameButton = styled.button`
@@ -172,6 +174,7 @@ export default function Scoreboard() {
           <div css={playerScoreStyles}>
             <span>{lpData.score || 0}</span>
           </div>
+          <StatPopdown isActive={currGameInfo.leftPlayerActive} textToDisplay="Some Text" />
         </div>
         <div css={matchSectionStyles}>
           <span>{`${matchData.leftPlayerFramesWon} - (${matchData.totalFrames}) - ${matchData.rightPlayerFramesWon}`}</span>
@@ -183,6 +186,7 @@ export default function Scoreboard() {
           <div css={rightPlayerNameStyles} onClick={onRightPlayerClick}>
             <span>{rpData.name}</span>
           </div>
+          <StatPopdown isActive={!currGameInfo.leftPlayerActive} textToDisplay="Some Other Text" />
         </div>
       </div>
       <Modal
