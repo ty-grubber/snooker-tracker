@@ -298,11 +298,19 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
+        break: {
+          ...lpData.break,
+          current: 0,
+        },
         safeties: lpData.safeties + 1,
       });
     } else {
       rightPlayerStats({
         ...rpData,
+        break: {
+          ...lpData.break,
+          current: 0,
+        },
         safeties: rpData.safeties + 1,
       })
     }
@@ -319,6 +327,10 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
         ...lpData,
+        break: {
+          ...lpData.break,
+          current: 0,
+        },
         fouls: lpData.fouls + 1,
       })
       rightPlayerStats({
@@ -328,6 +340,10 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     } else {
       rightPlayerStats({
         ...rpData,
+        break: {
+          ...lpData.break,
+          current: 0,
+        },
         fouls: rpData.fouls + 1,
       })
       leftPlayerStats({

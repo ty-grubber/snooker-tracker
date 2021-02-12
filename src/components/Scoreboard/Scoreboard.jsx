@@ -3,7 +3,7 @@ import { useReactiveVar } from '@apollo/client';
 import { css, jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import React, { useCallback, useEffect, useState } from 'react';
-import { leftPlayerStats, rightPlayerStats, matchStats, gameInfo } from '../../cache';
+import { gameInfo, leftPlayerStats, matchStats, rightPlayerStats } from '../../cache';
 import { BALL_VALUES, VALUE_TO_BACKGROUND_COLOR, VALUE_TO_FONT_COLOR } from '../../constants/ball';
 import Modal from '../Modal';
 import StatPopdown from '../StatPopdown';
@@ -32,7 +32,6 @@ export default function Scoreboard() {
   `
 
   const playerSectionStyles = css`
-    border: 2px solid black;
     border-top: 0 none;
     display: flex;
     flex-basis: 40%;
@@ -64,6 +63,7 @@ export default function Scoreboard() {
 
   const matchSectionStyles = css`
     background-color: #eee;
+    flex-basis: 10%;
   `
 
   const NextFrameButton = styled.button`
@@ -174,10 +174,19 @@ export default function Scoreboard() {
           <div css={playerScoreStyles}>
             <span>{lpData.score || 0}</span>
           </div>
-          <StatPopdown isActive={currGameInfo.leftPlayerActive} textToDisplay="Some Text" />
+          <StatPopdown
+            isActive={currGameInfo.leftPlayerActive}
+            textToDisplay={`Current Break: ${lpData.break.current}`}
+          />
         </div>
         <div css={matchSectionStyles}>
-          <span>{`${matchData.leftPlayerFramesWon} - (${matchData.totalFrames}) - ${matchData.rightPlayerFramesWon}`}</span>
+          <span>
+            {`${matchData.leftPlayerFramesWon} - (${matchData.totalFrames}) - ${matchData.rightPlayerFramesWon}`}
+          </span>
+          <hr css={css`margin: 0;`} />
+          <span>
+            {`Remaining: ${currGameInfo.pointsLeft}`}
+          </span>
         </div>
         <div css={playerSectionStyles}>
           <div css={playerScoreStyles}>
@@ -186,7 +195,10 @@ export default function Scoreboard() {
           <div css={rightPlayerNameStyles} onClick={onRightPlayerClick}>
             <span>{rpData.name}</span>
           </div>
-          <StatPopdown isActive={!currGameInfo.leftPlayerActive} textToDisplay="Some Other Text" />
+          <StatPopdown
+            isActive={!currGameInfo.leftPlayerActive}
+            textToDisplay={`Current Break: ${rpData.break.current}`}
+          />
         </div>
       </div>
       <Modal

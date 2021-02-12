@@ -5,16 +5,20 @@ import PropTypes from 'prop-types';
 export default function StatPopdown({ isActive, textToDisplay }) {
   const structureStyles = css`
     background-color: lightblue;
+    border-top: 0;
     height: 0;
+    line-height: 5vh;
+    margin-bottom: 5vh;
     overflow: hidden;
     padding-left: 1rem;
     text-align: left;
-    transition: height 1s;
+    transition: all 1s;
   `
 
   const activeWrapperStyles = css`
-    line-height: 4vh;
-    height: 4vh;
+    border-top: 1px solid lightblue;
+    height: 5vh;
+    margin-bottom: 0;
   `
 
   const wrapperStyles = [structureStyles];
