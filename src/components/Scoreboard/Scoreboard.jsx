@@ -176,7 +176,7 @@ export default function Scoreboard() {
           </div>
           <StatPopdown
             isActive={currGameInfo.leftPlayerActive}
-            textToDisplay={`Current Break: ${lpData.break.current}`}
+            messageArray={[`Current Break: ${lpData.break.current}`, 'Test String 1']}
           />
         </div>
         <div css={matchSectionStyles}>
@@ -197,7 +197,7 @@ export default function Scoreboard() {
           </div>
           <StatPopdown
             isActive={!currGameInfo.leftPlayerActive}
-            textToDisplay={`Current Break: ${rpData.break.current}`}
+            messageArray={[`Current Break: ${rpData.break.current}`]}
           />
         </div>
       </div>
