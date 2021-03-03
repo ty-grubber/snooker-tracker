@@ -3,9 +3,12 @@ import { useReactiveVar } from '@apollo/client';
 import { css, jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import React, { useCallback, useEffect, useState } from 'react';
-import { leftPlayerStats, rightPlayerStats, matchStats, gameInfo } from '../../cache';
+import { gameInfo, leftPlayerStats, matchStats, rightPlayerStats } from '../../cache';
 import { BALL_VALUES, VALUE_TO_BACKGROUND_COLOR, VALUE_TO_FONT_COLOR } from '../../constants/ball';
+import { ALT_STAT_DISPLAY_LENGTH_IN_SEC } from '../../constants/misc';
+import { SHOT_TYPES } from '../../constants/shots';
 import Modal from '../Modal';
+import StatPopdown from '../StatPopdown';
 
 export default function Scoreboard() {
   const lpData = useReactiveVar(leftPlayerStats);
@@ -15,10 +18,8 @@ export default function Scoreboard() {
 
   const scoreboardStyles = css`
     align-content: center;
-    border: 2px solid black;
     display: flex;
     justify-content: center;
-    height: 5vh;
     margin: auto;
     max-width: 1000px;
     width: 75%;
@@ -33,11 +34,14 @@ export default function Scoreboard() {
   `
 
   const playerSectionStyles = css`
+    border-top: 0 none;
     display: flex;
     flex-basis: 40%;
+    flex-wrap: wrap;
 
     & > div {
       flex-grow: 1;
+      max-height: 5vh;
     }
   `
 
@@ -60,8 +64,8 @@ export default function Scoreboard() {
   `
 
   const matchSectionStyles = css`
-    border-left: 2px solid black;
-    border-right: 2px solid black;
+    background-color: #eee;
+    flex-basis: 10%;
   `
 
   const NextFrameButton = styled.button`
@@ -85,6 +89,8 @@ export default function Scoreboard() {
   }
 
   const [showGameEndModal, setShowGameEndModal] = useState(false);
+  const [leftPlayerMessages, setLeftPlayerMessages] = useState([`Current Break: ${lpData.break.current}`]);
+  const [rightPlayerMessages, setRightPlayerMessages] = useState([`Current Break: ${rpData.break.current}`]);
 
   // TODO: This will eventually change into a dropdown with menu items
   const onPlayerClick = useCallback((playerData) => {
@@ -104,10 +110,6 @@ export default function Scoreboard() {
   const onRightPlayerClick = useCallback(() => {
     onPlayerClick(rpData);
   }, [rpData, onPlayerClick]);
-
-  useEffect(() => {
-    console.log(`${currGameInfo.pointsLeft} points left on table.`)
-  }, [currGameInfo.pointsLeft]);
 
   const onGameFinish = useCallback(() => {
     const lpWon = lpData.score > rpData.score;
@@ -153,6 +155,87 @@ export default function Scoreboard() {
     });
   }, [currGameInfo, lpData, matchData, rpData]);
 
+  const resetMessages = useCallback(() => {
+    setLeftPlayerMessages([`Current Break: ${lpData.break.current}`]);
+    setRightPlayerMessages([`Current Break: ${rpData.break.current}`]);
+  }, [lpData.break, rpData.break]);
+
+  const updateMessages = useCallback(() => {
+    const lpMessages = [`Current Break: ${lpData.break.current}`];
+    const rpMessages = [`Current Break: ${rpData.break.current}`];
+
+    if (!!currGameInfo.log.length) {
+      const lastShotType = currGameInfo.log[currGameInfo.log.length - 1].shotType;
+      const lpActive = currGameInfo.leftPlayerActive;
+      let shots = {};
+      let message;
+
+      switch (lastShotType) {
+        case SHOT_TYPES.LONG_MISS:
+          shots = lpActive ? rpData.shots : lpData.shots;
+          message = `Match Long Pot Success: ${((shots.longPotted * 100) / shots.longAttempted).toFixed(1)}%`
+          if (lpActive) {
+            rpMessages.push(message);
+          } else {
+            lpMessages.push(message);
+          }
+          break;
+
+        case SHOT_TYPES.LONG_POT:
+          shots = lpActive ? lpData.shots : rpData.shots;
+          message = `Match Long Pot Success: ${((shots.longPotted * 100) / shots.longAttempted).toFixed(1)}%`
+          if (lpActive) {
+            lpMessages.push(message);
+          } else {
+            rpMessages.push(message);
+          }
+          break;
+
+        case SHOT_TYPES.MISS:
+          shots = lpActive ? rpData.shots : lpData.shots;
+          message = `Match Pot Success: ${((shots.potted * 100) / shots.attempted).toFixed(1)}%`
+          if (lpActive) {
+            rpMessages.push(message);
+          } else {
+            lpMessages.push(message);
+          }
+          break;
+
+        case SHOT_TYPES.POT:
+          shots = lpActive ? lpData.shots : rpData.shots;
+          message = `Match Pot Success: ${((shots.potted * 100) / shots.attempted).toFixed(1)}%`
+          if (lpActive) {
+            lpMessages.push(message);
+          } else {
+            rpMessages.push(message);
+          }
+          break;
+
+        case SHOT_TYPES.FOUL:
+          if (lpActive) {
+            rpMessages.push(`Match Fouls: ${rpData.fouls}`)
+          } else {
+            lpMessages.push(`Match Fouls: ${lpData.fouls}`)
+          }
+          break;
+
+        default:
+          break;
+      }
+    }
+
+    setLeftPlayerMessages(lpMessages);
+    setRightPlayerMessages(rpMessages);
+  }, [currGameInfo.leftPlayerActive, currGameInfo.log, lpData, rpData])
+
+  useEffect(() => {
+    if (currGameInfo.log.length) {
+      updateMessages();
+
+      setTimeout(resetMessages, ALT_STAT_DISPLAY_LENGTH_IN_SEC * 1000);
+    }
+  }, [currGameInfo.log.length, resetMessages, updateMessages]);
+
   useEffect(() => {
     if (currGameInfo.validBallType === BALL_VALUES.CUE) {
       console.log('Game has finished.');
@@ -172,9 +255,21 @@ export default function Scoreboard() {
           <div css={playerScoreStyles}>
             <span>{lpData.score || 0}</span>
           </div>
+          {!!lpData.score && (
+            <StatPopdown
+              isActive={currGameInfo.leftPlayerActive}
+              messageArray={leftPlayerMessages}
+            />
+          )}
         </div>
         <div css={matchSectionStyles}>
-          <span>{`${matchData.leftPlayerFramesWon} - (${matchData.totalFrames}) - ${matchData.rightPlayerFramesWon}`}</span>
+          <span>
+            {`${matchData.leftPlayerFramesWon} - (${matchData.totalFrames}) - ${matchData.rightPlayerFramesWon}`}
+          </span>
+          <hr css={css`margin: 0;`} />
+          <span>
+            {`Remaining: ${currGameInfo.pointsLeft}`}
+          </span>
         </div>
         <div css={playerSectionStyles}>
           <div css={playerScoreStyles}>
@@ -183,6 +278,12 @@ export default function Scoreboard() {
           <div css={rightPlayerNameStyles} onClick={onRightPlayerClick}>
             <span>{rpData.name}</span>
           </div>
+          {!!rpData.score && (
+            <StatPopdown
+              isActive={!currGameInfo.leftPlayerActive}
+              messageArray={rightPlayerMessages}
+            />
+          )}
         </div>
       </div>
       <Modal

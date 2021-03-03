@@ -8,9 +8,9 @@ export default function App() {
   return (
     <div className="App">
       <Scoreboard />
+      <Table />
       <br />
       <span>See console for game log.</span>
-      <Table />
       <WelcomeModal />
     </div>
   );
