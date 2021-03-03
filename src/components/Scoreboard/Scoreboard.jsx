@@ -255,10 +255,12 @@ export default function Scoreboard() {
           <div css={playerScoreStyles}>
             <span>{lpData.score || 0}</span>
           </div>
-          <StatPopdown
-            isActive={currGameInfo.leftPlayerActive}
-            messageArray={leftPlayerMessages}
-          />
+          {!!lpData.score && (
+            <StatPopdown
+              isActive={currGameInfo.leftPlayerActive}
+              messageArray={leftPlayerMessages}
+            />
+          )}
         </div>
         <div css={matchSectionStyles}>
           <span>
@@ -276,10 +278,12 @@ export default function Scoreboard() {
           <div css={rightPlayerNameStyles} onClick={onRightPlayerClick}>
             <span>{rpData.name}</span>
           </div>
-          <StatPopdown
-            isActive={!currGameInfo.leftPlayerActive}
-            messageArray={rightPlayerMessages}
-          />
+          {!!rpData.score && (
+            <StatPopdown
+              isActive={!currGameInfo.leftPlayerActive}
+              messageArray={rightPlayerMessages}
+            />
+          )}
         </div>
       </div>
       <Modal
