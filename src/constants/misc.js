@@ -1,0 +1,1 @@
+export const ALT_STAT_DISPLAY_LENGTH_IN_SEC = 4;

@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { useCallback } from 'react';
 import { gameInfo, leftPlayerStats, rightPlayerStats } from '../../cache';
 import { BALL_VALUES, VALUE_TO_DISPLAY_COLOR } from '../../constants/ball';
+import { SHOT_TYPES } from '../../constants/shots';
 import { sizing } from '../../constants/styles';
 
 export default function BallMenu({ ballValue, className, isOpen, onAction, openDirection }) {
@@ -76,9 +77,10 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     return false;
   }, [ballValue, currGameInfo.validBallType]);
 
-  const createLogEntry = useCallback((logMessage) => {
+  const createLogEntry = useCallback((logMessage, shotType) => {
     return {
       message: logMessage,
+      shotType,
       statsToUndoTo: {
         leftPlayer: { ...lpData },
         rightPlayer: { ...rpData },
@@ -108,7 +110,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
   const onMiss = useCallback(() => {
     const logMessage = `Missed shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`
     console.log(logMessage);
-    const logEntry = createLogEntry(logMessage);
+    const logEntry = createLogEntry(logMessage, SHOT_TYPES.MISS);
 
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
@@ -143,7 +145,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
   const onLongMiss = useCallback(() => {
     const logMessage = `Missed long shot on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`
     console.log(logMessage);
-    const logEntry = createLogEntry(logMessage);
+    const logEntry = createLogEntry(logMessage, SHOT_TYPES.LONG_MISS);
 
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
@@ -180,7 +182,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     const wasRedPotted = ballValue === BALL_VALUES.RED;
     const logMessage = `Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]}. ${ballValue} ${wasRedPotted ? 'point' : 'points'}.`;
     console.log(logMessage);
-    const logEntry = createLogEntry(logMessage);
+    const logEntry = createLogEntry(logMessage, SHOT_TYPES.POT);
 
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
@@ -236,7 +238,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     const wasRedPotted = ballValue === BALL_VALUES.RED;
     const logMessage = `Potted ${VALUE_TO_DISPLAY_COLOR[ballValue]} with long shot. ${ballValue} ${wasRedPotted ? 'point' : 'points'}.`;
     console.log(logMessage);
-    const logEntry = createLogEntry(logMessage);
+    const logEntry = createLogEntry(logMessage, SHOT_TYPES.LONG_POT);
 
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
@@ -293,7 +295,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
   const onSafety = useCallback(() => {
     const logMessage = `Successful safety on ${VALUE_TO_DISPLAY_COLOR[ballValue]}.`;
     console.log(logMessage);
-    const logEntry = createLogEntry(logMessage);
+    const logEntry = createLogEntry(logMessage, SHOT_TYPES.SAFETY);
 
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
@@ -322,7 +324,7 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
     const foulValue = Math.max(4, ballValue);
     const logMessage = `Foul on ${VALUE_TO_DISPLAY_COLOR[ballValue]} ball. ${foulValue} points awarded to opponent.`;
     console.log(logMessage);
-    const logEntry = createLogEntry(logMessage);
+    const logEntry = createLogEntry(logMessage, SHOT_TYPES.FOUL);
 
     if (currGameInfo.leftPlayerActive) {
       leftPlayerStats({
@@ -361,30 +363,30 @@ export default function BallMenu({ ballValue, className, isOpen, onAction, openD
 
   const validBallShotResults = [
     {
-      name: 'Miss',
+      name: SHOT_TYPES.MISS,
       onClick: onMiss,
     },
     {
-      name: 'Long Miss',
+      name: SHOT_TYPES.LONG_MISS,
       onClick: onLongMiss,
     },
     {
-      name: 'Pot',
+      name: SHOT_TYPES.POT,
       onClick: onPot,
     },
     {
-      name: 'Long Pot',
+      name: SHOT_TYPES.LONG_POT,
       onClick: onLongPot,
     },
     {
-      name: 'Safety',
+      name: SHOT_TYPES.SAFETY,
       onClick: onSafety,
     }
   ];
 
   const foulShotResult = [
     {
-      name: 'Foul',
+      name: SHOT_TYPES.FOUL,
       onClick: onFoul,
     }
   ];

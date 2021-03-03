@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { css, jsx, keyframes } from '@emotion/core';
 import PropTypes from 'prop-types';
+import { ALT_STAT_DISPLAY_LENGTH_IN_SEC } from '../../constants/misc';
 
 export default function StatPopdown({ isActive, messageArray }) {
   const structureStyles = css`
@@ -13,6 +14,7 @@ export default function StatPopdown({ isActive, messageArray }) {
     padding-left: 1rem;
     text-align: left;
     transition: all 1s;
+    transition-delay: ${ALT_STAT_DISPLAY_LENGTH_IN_SEC - 1}s;
     width: 100%;
   `
 
@@ -32,18 +34,18 @@ export default function StatPopdown({ isActive, messageArray }) {
   }
 
   const twoMessages = keyframes`
-    0%, 45%, 100% {
+    0%, 5%, 100% {
       transform: translate3d(0, 0, 0);
     }
 
-    50%, 95% {
+    15%, 95% {
       transform: translate3d(0, -50%, 0);
     }
   `;
 
   const listStyles = css`
-    animation-duration: 10s;
-    animation-iteration-count: infinite;
+    animation-duration: ${ALT_STAT_DISPLAY_LENGTH_IN_SEC}s;
+    animation-iteration-count: 1;
     animation-name: ${twoMessages};
     list-style: none;
     margin-top: 0;
